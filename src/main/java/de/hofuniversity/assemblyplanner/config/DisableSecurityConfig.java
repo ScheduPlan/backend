@@ -17,7 +17,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class DisableSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(x -> x.anyRequest().anonymous());
+        http.authorizeHttpRequests(x -> x.anyRequest().permitAll()).csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 }
