@@ -12,16 +12,16 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private int number;
+    private Integer number;
     private String description;
-    private int commissionNumber;
-    private double weight;
+    private Integer commissionNumber;
+    private Double weight;
     private OrderState state;
     @ManyToOne private Customer customer;
     @OneToMany private List<Event> events;
     @ManyToMany private List<Product> products;
 
-    public Order(int number, String description, int commissionNumber, double weight, OrderState state, Customer customer, List<Event> events) {
+    public Order(Integer number, String description, Integer commissionNumber, Double weight, OrderState state, Customer customer, List<Event> events) {
         this.number = number;
         this.description = description;
         this.commissionNumber = commissionNumber;
@@ -39,11 +39,11 @@ public class Order {
         return id;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
@@ -55,19 +55,19 @@ public class Order {
         this.description = description;
     }
 
-    public int getCommissionNumber() {
+    public Integer getCommissionNumber() {
         return commissionNumber;
     }
 
-    public void setCommissionNumber(int commissionNumber) {
+    public void setCommissionNumber(Integer commissionNumber) {
         this.commissionNumber = commissionNumber;
     }
 
-    public double getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
-    public void setWeight(double weight) {
+    public void setWeight(Double weight) {
         this.weight = weight;
     }
 
