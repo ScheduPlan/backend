@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import jakarta.persistence.*;
 
@@ -12,7 +13,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Embedded private Description description;
+    @Embedded @JsonUnwrapped private Description description;
     private double materialWidth;
     private String materialName;
     private String materialGroup;
