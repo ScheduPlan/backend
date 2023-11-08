@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -12,14 +13,16 @@ public class Address {
     private UUID id;
     private String country;
     private String street;
-    private int streetNumber;
+    private Integer streetNumber;
     private String city;
-    private int zip;
+    private String zip;
     private String description;
     private String addressSuffix;
     private AddressType addressType;
+    @Column(name = "customer_id")
+    private UUID ownerId;
 
-    public Address(String country, String street, int streetNumber, String city, int zip, String description, String addressSuffix, AddressType addressType) {
+    public Address(String country, String street, int streetNumber, String city, String zip, String description, String addressSuffix, AddressType addressType) {
         this.country = country;
         this.street = street;
         this.streetNumber = streetNumber;
@@ -55,11 +58,11 @@ public class Address {
         this.street = street;
     }
 
-    public int getStreetNumber() {
+    public Integer getStreetNumber() {
         return streetNumber;
     }
 
-    public void setStreetNumber(int streetNumber) {
+    public void setStreetNumber(Integer streetNumber) {
         this.streetNumber = streetNumber;
     }
 
@@ -71,11 +74,11 @@ public class Address {
         this.city = city;
     }
 
-    public int getZip() {
+    public String getZip() {
         return zip;
     }
 
-    public void setZip(int zip) {
+    public void setZip(String zip) {
         this.zip = zip;
     }
 

@@ -4,12 +4,13 @@ import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class Customer extends Person {
     private String company;
     private int customerNumber;
-    @OneToMany private List<Address> addresses;
+    @OneToMany(cascade = CascadeType.ALL) @JoinColumn(name = "customer_id", referencedColumnName = "id") private List<Address> addresses;
     @OneToMany private List<Order> orders;
     private String description;
 
