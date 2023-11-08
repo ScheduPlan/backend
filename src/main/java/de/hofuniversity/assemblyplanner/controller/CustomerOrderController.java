@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 
 import java.util.UUID;
 
@@ -41,7 +41,7 @@ public class CustomerOrderController {
     public Order createOrder(@PathVariable UUID customerId, @RequestBody OrderCreateRequest orderRequest) {
         Customer customer = customerRepository
                 .findById(orderRequest.customerId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(ResourceNotFoundException::new);
 
         Order order = new Order(orderRequest.number(),
                 orderRequest.description(),
@@ -64,7 +64,7 @@ public class CustomerOrderController {
     public Order updateOrder(@PathVariable UUID customerId, @PathVariable UUID orderId, @RequestBody OrderUpdateRequest updateRequest) {
         Order order = orderRepository
                 .findByCustomerId(customerId, orderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(ResourceNotFoundException::new);
 
         if(updateRequest.commissionNumber() != null)
             order.setCommissionNumber(updateRequest.commissionNumber());
@@ -88,7 +88,7 @@ public class CustomerOrderController {
     public Order putOrder(@PathVariable UUID customerId, @PathVariable UUID orderId, @RequestBody OrderUpdateRequest updateRequest) {
         Order order = orderRepository
                 .findByCustomerId(customerId, orderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(ResourceNotFoundException::new);
 
         BeanUtils.copyProperties(updateRequest, order);
 
@@ -100,7 +100,7 @@ public class CustomerOrderController {
     public Order deleteOrder(@PathVariable UUID customerId, @PathVariable UUID orderId) {
         Order order = orderRepository
                 .findByCustomerId(customerId, orderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(ResourceNotFoundException::new);
 
         orderRepository.delete(order);
         return order;

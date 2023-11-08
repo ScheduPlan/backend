@@ -7,16 +7,18 @@ import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/products")
+@Tag(name = "Products")
 public class ProductController {
 
     private final ProductRepository productRepository;
@@ -40,7 +42,7 @@ public class ProductController {
     public Product getProduct(@PathVariable UUID productId) {
         return productRepository
                 .findById(productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(ResourceNotFoundException::new);
     }
 
     @PostMapping
@@ -67,7 +69,7 @@ public class ProductController {
     public Product patchProduct(@PathVariable UUID productId, @RequestBody ProductUpdateRequest updateRequest) {
         Product product = productRepository
                 .findById(productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(ResourceNotFoundException::new);
 
         if(updateRequest.materialGroup() != null)
             product.setMaterialGroup(updateRequest.productGroup());
@@ -91,7 +93,7 @@ public class ProductController {
     public Product putProduct(@PathVariable UUID productId, @RequestBody ProductUpdateRequest updateRequest) {
         Product product = productRepository
                 .findById(productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(ResourceNotFoundException::new);
 
         BeanUtils.copyProperties(updateRequest, product, "description");
         product.getDescription().setName(updateRequest.name());
