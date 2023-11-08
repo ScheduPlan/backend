@@ -17,6 +17,7 @@ public class Order {
     private Integer commissionNumber;
     private Double weight;
     private OrderState state;
+
     @ManyToOne private Customer customer;
     @OneToMany private List<Event> events;
     @ManyToMany private List<Product> products;

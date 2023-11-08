@@ -1,10 +1,12 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 public class Customer extends Person {

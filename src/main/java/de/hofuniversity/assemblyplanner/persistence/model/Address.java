@@ -1,6 +1,5 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.util.Objects;

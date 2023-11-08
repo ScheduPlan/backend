@@ -1,6 +1,5 @@
 package de.hofuniversity.assemblyplanner.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.Address;
 import de.hofuniversity.assemblyplanner.persistence.model.Customer;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
