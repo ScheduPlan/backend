@@ -10,6 +10,5 @@ public record ProductCreateRequest(
         double materialWidth,
         String materialName,
         String materialGroup,
-        String productGroup,
-        List<Part> parts
+        String productGroup
 ) { }

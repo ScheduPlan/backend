@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.controller;
 
+import de.hofuniversity.assemblyplanner.persistence.model.Part;
 import de.hofuniversity.assemblyplanner.persistence.model.Product;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductCreateRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductUpdateRequest;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @RestController
@@ -54,8 +56,7 @@ public class ProductController {
                 createRequest.materialWidth(),
                 createRequest.materialName(),
                 createRequest.materialGroup(),
-                createRequest.productGroup(),
-                createRequest.parts()
+                createRequest.productGroup()
         );
 
         return productRepository.save(product);

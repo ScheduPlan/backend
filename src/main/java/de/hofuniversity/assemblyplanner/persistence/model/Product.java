@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -18,19 +19,41 @@ public class Product {
     private String materialName;
     private String materialGroup;
     private String productGroup;
-    @ManyToMany private List<Part> parts;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductPart> parts;
 
-    public Product(Description description, double materialWidth, String materialName, String materialGroup, String productGroup, List<Part> parts) {
+    public Product(Description description, double materialWidth, String materialName, String materialGroup, String productGroup) {
         this.description = description;
         this.materialWidth = materialWidth;
         this.materialName = materialName;
         this.materialGroup = materialGroup;
         this.productGroup = productGroup;
-        this.parts = parts;
+        this.parts = new ArrayList<>();
     }
 
     public Product() {
 
+    }
+
+    public ProductPart addPart(Part part, int amount) {
+        ProductPart productPart = new ProductPart(this, part, amount);
+        parts.add(productPart);
+        part.getProducts().add(productPart);
+        return productPart;
+    }
+
+    public ProductPart removePart(Part part) {
+        ProductPart productPart = parts
+                .stream()
+                .filter(p -> p.getPart().equals(part))
+                .findFirst()
+                .orElse(null);
+
+        if(productPart == null)
+            return null;
+
+        productPart.getPart().getProducts().remove(productPart);
+        return productPart;
     }
 
     public UUID getId() {
@@ -77,11 +100,11 @@ public class Product {
         this.productGroup = productGroup;
     }
 
-    public List<Part> getParts() {
+    public List<ProductPart> getParts() {
         return parts;
     }
 
-    public void setParts(List<Part> parts) {
+    public void setParts(List<ProductPart> parts) {
         this.parts = parts;
     }
 

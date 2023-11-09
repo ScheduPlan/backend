@@ -13,13 +13,20 @@ public class Part {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Embedded private Description description;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductPart> products;
 
-    public Part(Description description, List<Product> products) {
+    public Part(Description description, List<ProductPart> products) {
         this.description = description;
+        this.products = products;
     }
 
     public Part() {
 
+    }
+
+    public List<ProductPart> getProducts() {
+        return products;
     }
 
     public UUID getId() {
