@@ -18,6 +18,9 @@ public class Address {
     private String description;
     private String addressSuffix;
     private AddressType addressType;
+
+    //by using this dummy value, we prevent JPA from JOINing the two tables.
+    // Instead, we can run the query based on the ownerId.
     @Column(name = "customer_id")
     private UUID ownerId;
 
