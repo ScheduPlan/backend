@@ -2,7 +2,7 @@ package de.hofuniversity.assemblyplanner.controller;
 
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.Part;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.PartCreateRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourceRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.PartRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequestMapping("/parts")
 public class PartController {
 
-    private PartRepository partRepository;
+    private final PartRepository partRepository;
 
     public PartController(@Autowired PartRepository partRepository) {
         this.partRepository = partRepository;
@@ -44,7 +44,7 @@ public class PartController {
     @PostMapping
     @Operation(summary = "creates a part")
     @ResponseStatus(HttpStatus.CREATED)
-    public Part createPart(@RequestBody PartCreateRequest partCreateRequest) {
+    public Part createPart(@RequestBody DescribableResourceRequest partCreateRequest) {
         Part part = new Part(
                 new Description(partCreateRequest.name(),
                         partCreateRequest.description()
@@ -60,7 +60,7 @@ public class PartController {
             @ApiResponse(responseCode = "404", description = "the part wasn't found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public Part patchPart(@PathVariable UUID partId, @RequestBody PartCreateRequest partCreateRequest) {
+    public Part patchPart(@PathVariable UUID partId, @RequestBody DescribableResourceRequest partCreateRequest) {
         Part part = partRepository.findById(partId)
                 .orElseThrow(ResourceNotFoundException::new);
 
@@ -77,7 +77,7 @@ public class PartController {
             @ApiResponse(responseCode = "404", description = "the part wasn't found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public Part putPart(@PathVariable UUID partId, @RequestBody PartCreateRequest partCreateRequest) {
+    public Part putPart(@PathVariable UUID partId, @RequestBody DescribableResourceRequest partCreateRequest) {
         Part part = partRepository.findById(partId)
                 .orElseThrow(ResourceNotFoundException::new);
 

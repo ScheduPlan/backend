@@ -1,6 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model.dto;
 
-public record PartCreateRequest(
+public record DescribableResourceRequest(
         String name,
         String description
 ) { }
