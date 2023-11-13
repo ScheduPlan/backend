@@ -1,6 +1,6 @@
 package de.hofuniversity.assemblyplanner.controller;
 
-import de.hofuniversity.assemblyplanner.persistence.model.Part;
+import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.Product;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductCreateRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductUpdateRequest;
@@ -13,9 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 @RestController
@@ -101,5 +99,19 @@ public class ProductController {
         product.getDescription().setDescription(updateRequest.description());
 
         return productRepository.save(product);
+    }
+
+    @DeleteMapping("/{productId}")
+    @Operation(summary = "deletes a product", responses = {
+            @ApiResponse(responseCode = "404", description = "the product was not found")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public Product deleteProduct(@PathVariable UUID productId) {
+        Product product = productRepository
+                .findById(productId)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        productRepository.delete(product);
+        return product;
     }
 }
