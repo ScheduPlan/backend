@@ -3,8 +3,8 @@ package de.hofuniversity.assemblyplanner.persistence.model;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import jakarta.persistence.*;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -14,9 +14,9 @@ public class Part {
     private UUID id;
     @Embedded private Description description;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductPart> products;
+    private Set<ProductPart> products;
 
-    public Part(Description description, List<ProductPart> products) {
+    public Part(Description description, Set<ProductPart> products) {
         this.description = description;
         this.products = products;
     }
@@ -25,7 +25,7 @@ public class Part {
 
     }
 
-    public List<ProductPart> getProducts() {
+    public Set<ProductPart> getProducts() {
         return products;
     }
 
