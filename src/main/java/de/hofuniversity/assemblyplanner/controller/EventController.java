@@ -22,8 +22,8 @@ public class EventController {
 
     @GetMapping
     @Operation(summary = "gets all events", description = "gets all events or, if specified, retrieves events " +
-            "using the given timeframe specification. If only \"start\" is specified, retrieves all Event objects " +
-            "BEFORE start. If only \"end\" is specified, retrieves all Event objects AFTER end. All dates sent MUST " +
+            "using the given timeframe specification. If only \"end\" is specified, retrieves all Event objects " +
+            "BEFORE end. If only \"start\" is specified, retrieves all Event objects AFTER start. All dates sent MUST " +
             "conform to ISO-8601 Date-Time formatting (yyyy-MM-dd'T'HH:mm:ss.SSSXXX), where XXX can also be replaced " +
             "by 'Z' in order to indicate UTC time.")
     @ResponseStatus(HttpStatus.OK)

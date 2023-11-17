@@ -28,10 +28,10 @@ public class DateSpecification<T> implements Specification<T> {
         Predicate predicate = null;
         if(startDate != null && endDate != null)
             predicate = criteriaBuilder.between(root.get(field), startDate, endDate);
-        else if(startDate != null)
-            predicate = criteriaBuilder.lessThan(root.get(field), startDate);
         else if(endDate != null)
-            predicate = criteriaBuilder.greaterThan(root.get(field), endDate);
+            predicate = criteriaBuilder.lessThan(root.get(field), endDate);
+        else if(startDate != null)
+            predicate = criteriaBuilder.greaterThan(root.get(field), startDate);
         return predicate;
     }
 }
