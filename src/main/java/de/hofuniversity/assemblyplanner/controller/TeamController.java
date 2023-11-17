@@ -38,10 +38,10 @@ public class TeamController {
         return teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
     }
 
-    @PostMapping("/{teamId}")
+    @PostMapping
     @Operation(summary = "creates a team")
     @ResponseStatus(HttpStatus.CREATED)
-    public AssemblyTeam createTeam(@PathVariable UUID teamId, @RequestBody DescribableResourceRequest teamCreateRequest) {
+    public AssemblyTeam createTeam(@RequestBody DescribableResourceRequest teamCreateRequest) {
         AssemblyTeam team = new AssemblyTeam(
                 new Description(teamCreateRequest.name(), teamCreateRequest.description()), null);
 
