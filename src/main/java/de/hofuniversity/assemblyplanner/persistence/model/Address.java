@@ -24,7 +24,7 @@ public class Address {
     @Column(name = "customer_id")
     private UUID ownerId;
 
-    public Address(String country, String street, int streetNumber, String city, String zip, String description, String addressSuffix, AddressType addressType) {
+    public Address(String country, String street, Integer streetNumber, String city, String zip, String description, String addressSuffix, AddressType addressType) {
         this.country = country;
         this.street = street;
         this.streetNumber = streetNumber;
