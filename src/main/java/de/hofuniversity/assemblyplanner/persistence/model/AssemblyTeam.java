@@ -20,6 +20,8 @@ public class AssemblyTeam {
         this.employees = employees;
     }
 
+    public AssemblyTeam() {}
+
     public UUID getId() {
         return id;
     }
