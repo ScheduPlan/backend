@@ -86,7 +86,7 @@ public class CustomerController {
         return customerRepository.save(customer);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{customerId}")
     @Operation(summary = "deletes a customer", responses = {
             @ApiResponse(responseCode = "404", description = "the customer wasn't found")
     })
