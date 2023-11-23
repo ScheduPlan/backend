@@ -12,8 +12,11 @@ import java.util.Objects;
 public class Customer extends Person {
     private String company;
     private int customerNumber;
-    @OneToMany(cascade = CascadeType.ALL) @JoinColumn(name = "customer_id", referencedColumnName = "id") private List<Address> addresses;
-    @OneToMany private List<Order> orders;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private List<Address> addresses;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
     private String description;
 
     public Customer(String company, int customerNumber, String description, String firstName, String lastName) {
