@@ -1,6 +1,7 @@
 package de.hofuniversity.assemblyplanner.controller;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Customer;
+import de.hofuniversity.assemblyplanner.persistence.model.Person;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.CustomerRequest;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,7 +50,9 @@ public class CustomerController {
         Customer customer = new Customer(
                 customerRequest.company(),
                 customerRequest.customerNumber(),
-                customerRequest.description());
+                customerRequest.description(),
+                customerRequest.person().firstName(),
+                customerRequest.person().lastName());
         return customerRepository.save(customer);
     }
 
@@ -66,6 +69,7 @@ public class CustomerController {
             customer.setCompany(patchRequest.company());
         if(patchRequest.description() != null)
             customer.setDescription(patchRequest.description());
+        Person.assign(patchRequest.person(), customer, true);
 
         return customerRepository.save(customer);
     }
@@ -78,6 +82,7 @@ public class CustomerController {
     public Customer putCustomer(@PathVariable UUID customerId, @RequestBody CustomerRequest putRequest) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
         BeanUtils.copyProperties(putRequest, customer);
+        Person.assign(putRequest.person(), customer, false);
         return customerRepository.save(customer);
     }
 

@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
+import de.hofuniversity.assemblyplanner.persistence.model.dto.PersonRequest;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -44,5 +45,15 @@ public class Person {
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, lastName);
+    }
+
+    public static void assign(PersonRequest request, Person person, boolean ignoreEmpty) {
+        if(person == null || request == null) {
+            return;
+        }
+        if(request.firstName() != null || !ignoreEmpty)
+            person.setFirstName(request.firstName());
+        if(request.lastName() != null || !ignoreEmpty)
+            person.setLastName(request.lastName());
     }
 }

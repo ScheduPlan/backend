@@ -16,10 +16,12 @@ public class Customer extends Person {
     @OneToMany private List<Order> orders;
     private String description;
 
-    public Customer(String company, int customerNumber, String description) {
+    public Customer(String company, int customerNumber, String description, String firstName, String lastName) {
         this.company = company;
         this.customerNumber = customerNumber;
         this.description = description;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public Customer() {
