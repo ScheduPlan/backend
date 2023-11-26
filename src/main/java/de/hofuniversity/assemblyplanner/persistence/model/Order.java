@@ -19,8 +19,8 @@ public class Order {
     private OrderState state;
 
     @ManyToOne private Customer customer;
-    @OneToMany private List<Event> events;
-    @ManyToMany private List<Product> products;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) private List<Event> events;
+    @ManyToMany(cascade = CascadeType.ALL) private List<Product> products;
 
     public Order(Integer number, String description, Integer commissionNumber, Double weight, OrderState state, Customer customer, List<Event> events) {
         this.number = number;
