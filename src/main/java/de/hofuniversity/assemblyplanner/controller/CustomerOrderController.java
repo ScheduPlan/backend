@@ -19,7 +19,7 @@ import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/customer/{customerId}/orders")
+@RequestMapping("/customers/{customerId}/orders")
 public class CustomerOrderController {
 
     private final OrderRepository orderRepository;
@@ -49,7 +49,7 @@ public class CustomerOrderController {
     @ResponseStatus(HttpStatus.CREATED)
     public Order createOrder(@PathVariable UUID customerId, @RequestBody OrderCreateRequest orderRequest) {
         Customer customer = customerRepository
-                .findById(orderRequest.customerId())
+                .findById(customerId)
                 .orElseThrow(ResourceNotFoundException::new);
 
         Order order = new Order(orderRequest.number(),
