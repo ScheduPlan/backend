@@ -31,6 +31,15 @@ public class CustomerOrderController {
         this.customerRepository = customerRepository;
     }
 
+    @GetMapping
+    @Operation(summary = "returns all orders associated to the given customer", responses = {
+            @ApiResponse(responseCode = "404", description = "the given customer was not found")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Order> getOrders(@PathVariable UUID customerId) {
+        return customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new).getOrders();
+    }
+
     @GetMapping("/{orderId}")
     @Operation(summary = "gets an order", responses = {
             @ApiResponse(responseCode = "404", description = "the order was not found")
