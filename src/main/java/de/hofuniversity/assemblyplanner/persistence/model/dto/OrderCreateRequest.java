@@ -9,6 +9,5 @@ public record OrderCreateRequest (
         Integer number,
         String description,
         Integer commissionNumber,
-        Double weight,
-        UUID customerId
+        Double weight
 ) { }
