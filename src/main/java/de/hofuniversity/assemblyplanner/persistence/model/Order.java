@@ -2,8 +2,8 @@ package de.hofuniversity.assemblyplanner.persistence.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -19,10 +19,11 @@ public class Order {
     private OrderState state;
 
     @ManyToOne private Customer customer;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) private List<Event> events;
-    @ManyToMany(cascade = CascadeType.ALL) private List<Product> products;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) private Set<Event> events;
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Product> products;
 
-    public Order(Integer number, String description, Integer commissionNumber, Double weight, OrderState state, Customer customer, List<Event> events) {
+    public Order(Integer number, String description, Integer commissionNumber, Double weight, OrderState state, Customer customer, Set<Event> events) {
         this.number = number;
         this.description = description;
         this.commissionNumber = commissionNumber;
@@ -88,19 +89,19 @@ public class Order {
         this.customer = customer;
     }
 
-    public List<Event> getEvents() {
+    public Set<Event> getEvents() {
         return events;
     }
 
-    public void setEvents(List<Event> events) {
+    public void setEvents(Set<Event> events) {
         this.events = events;
     }
 
-    public List<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(Set<Product> products) {
         this.products = products;
     }
 
@@ -109,7 +110,7 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return number == order.number && commissionNumber == order.commissionNumber && Double.compare(weight, order.weight) == 0 && Objects.equals(id, order.id) && Objects.equals(description, order.description) && state == order.state && Objects.equals(customer, order.customer) && Objects.equals(events, order.events) && Objects.equals(products, order.products);
+        return number.equals(order.number) && commissionNumber.equals(order.commissionNumber) && Double.compare(weight, order.weight) == 0 && Objects.equals(id, order.id) && Objects.equals(description, order.description) && state == order.state && Objects.equals(customer, order.customer) && Objects.equals(events, order.events) && Objects.equals(products, order.products);
     }
 
     @Override

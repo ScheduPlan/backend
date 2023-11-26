@@ -4,6 +4,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.Customer;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.OrderState;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderCreateRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderDeleteResponse;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderUpdateRequest;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
@@ -106,12 +107,16 @@ public class CustomerOrderController {
 
     @DeleteMapping("/{orderId}")
     @ResponseStatus(HttpStatus.OK)
-    public Order deleteOrder(@PathVariable UUID customerId, @PathVariable UUID orderId) {
+    public OrderDeleteResponse deleteOrder(@PathVariable UUID customerId, @PathVariable UUID orderId) {
         Order order = orderRepository
                 .findByCustomerId(customerId, orderId)
                 .orElseThrow(ResourceNotFoundException::new);
 
+        order.getProducts().clear();
+
+        OrderDeleteResponse response = new OrderDeleteResponse(order);
+
         orderRepository.delete(order);
-        return order;
+        return response;
     }
 }
