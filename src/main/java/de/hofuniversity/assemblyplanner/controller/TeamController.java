@@ -3,6 +3,7 @@ package de.hofuniversity.assemblyplanner.controller;
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourceRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.TeamDeleteResponse;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,9 +80,10 @@ public class TeamController {
             @ApiResponse(responseCode = "404", description = "the team was not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public AssemblyTeam deleteTeam(@PathVariable UUID teamId) {
+    public TeamDeleteResponse deleteTeam(@PathVariable UUID teamId) {
         AssemblyTeam team = teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
+        TeamDeleteResponse response = new TeamDeleteResponse(team);
         teamRepository.delete(team);
-        return team;
+        return response;
     }
 }
