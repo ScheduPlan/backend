@@ -1,15 +1,13 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Embeddable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Embeddable
 public class User implements Serializable, UserDetails {
@@ -19,7 +17,7 @@ public class User implements Serializable, UserDetails {
     private Role role;
     private Date expiryDate;
     private boolean locked;
-    private boolean enabled;
+    private boolean enabled = true;
 
     public User(String userName, String email, String password, Role role, Date expiryDate) {
         this.userName = userName;
@@ -63,7 +61,16 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.toString()));
+        ArrayList<GrantedAuthority> authorities = new ArrayList<>(3);
+        switch (role) {
+            case ADMINISTRATOR:
+                authorities.add(new SimpleGrantedAuthority(Role.ADMINISTRATOR.toString()));
+            case MANAGER:
+                authorities.add(new SimpleGrantedAuthority(Role.MANAGER.toString()));
+            case FITTER:
+                authorities.add(new SimpleGrantedAuthority(Role.FITTER.toString()));
+        }
+        return authorities;
     }
 
     @Override
@@ -76,9 +83,9 @@ public class User implements Serializable, UserDetails {
         return userName;
     }
 
-    @Override
+    @Override @JsonIgnore
     public boolean isAccountNonExpired() {
-        return expiryDate.after(new Date());
+        return expiryDate == null || expiryDate.after(new Date());
     }
 
     @Override
@@ -86,9 +93,9 @@ public class User implements Serializable, UserDetails {
         return !locked;
     }
 
-    @Override
+    @Override @JsonIgnore
     public boolean isCredentialsNonExpired() {
-        return expiryDate.after(new Date());
+        return expiryDate == null || expiryDate.after(new Date());
     }
 
     @Override
