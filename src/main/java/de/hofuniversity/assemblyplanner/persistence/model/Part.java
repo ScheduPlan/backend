@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import jakarta.persistence.*;
 
@@ -14,6 +15,7 @@ public class Part {
     private UUID id;
     @Embedded private Description description;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<ProductPart> products;
 
     public Part(Description description, Set<ProductPart> products) {

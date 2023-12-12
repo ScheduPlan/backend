@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import jakarta.persistence.*;
@@ -20,6 +21,7 @@ public class Product {
     private String materialGroup;
     private String productGroup;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<ProductPart> parts;
 
     public Product(Description description, double materialWidth, String materialName, String materialGroup, String productGroup) {
