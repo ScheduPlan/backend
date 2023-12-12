@@ -14,7 +14,7 @@ public class AssemblyTeam {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Embedded private Description description;
-    @OneToMany private List<Employee> employees;
+    @OneToMany(mappedBy = "team") private List<Employee> employees;
     @OneToMany(mappedBy = "team") @JsonBackReference private List<Order> orders;
 
     public AssemblyTeam(Description description, List<Employee> employees, List<Order> orders) {

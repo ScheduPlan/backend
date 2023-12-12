@@ -20,7 +20,7 @@ public class Order {
     private OrderState state;
 
     @ManyToOne private Customer customer;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) private Set<Event> events;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "order") private Set<Event> events;
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Product> products;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
