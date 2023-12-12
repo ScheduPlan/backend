@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -22,6 +23,9 @@ public class Order {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true) private Set<Event> events;
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Product> products;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonManagedReference
+    private AssemblyTeam team;
 
     public Order(Integer number, String description, Integer commissionNumber, Double weight, OrderState state, Customer customer, Set<Event> events) {
         this.number = number;
@@ -103,6 +107,14 @@ public class Order {
 
     public void setProducts(Set<Product> products) {
         this.products = products;
+    }
+
+    public AssemblyTeam getTeam() {
+        return team;
+    }
+
+    public void setTeam(AssemblyTeam team) {
+        this.team = team;
     }
 
     @Override

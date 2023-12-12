@@ -44,7 +44,7 @@ public class TeamController {
     @ResponseStatus(HttpStatus.CREATED)
     public AssemblyTeam createTeam(@RequestBody DescribableResourceRequest teamCreateRequest) {
         AssemblyTeam team = new AssemblyTeam(
-                new Description(teamCreateRequest.name(), teamCreateRequest.description()), null);
+                new Description(teamCreateRequest.name(), teamCreateRequest.description()), null, null);
 
         return teamRepository.save(team);
     }

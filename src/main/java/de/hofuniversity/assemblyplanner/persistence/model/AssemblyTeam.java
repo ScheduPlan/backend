@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import jakarta.persistence.*;
 
@@ -14,10 +15,12 @@ public class AssemblyTeam {
     private UUID id;
     @Embedded private Description description;
     @OneToMany private List<Employee> employees;
+    @OneToMany(mappedBy = "team") @JsonBackReference private List<Order> orders;
 
-    public AssemblyTeam(Description description, List<Employee> employees) {
+    public AssemblyTeam(Description description, List<Employee> employees, List<Order> orders) {
         this.description = description;
         this.employees = employees;
+        this.orders = orders;
     }
 
     public AssemblyTeam() {}
@@ -40,6 +43,18 @@ public class AssemblyTeam {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    public Iterable<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public void addOrder(Order order) {
+        this.orders.add(order);
     }
 
     @Override

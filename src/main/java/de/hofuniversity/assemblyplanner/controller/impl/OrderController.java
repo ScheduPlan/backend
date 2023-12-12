@@ -20,7 +20,8 @@ public class OrderController {
 
     @EventListener(ApplicationReadyEvent.class)
     public void createOrder(ApplicationReadyEvent evt) {
-        orderRepository.save(new Order(123, "", 123, 1.0, OrderState.PLANNED, null, null));
+        orderRepository.save(
+                new Order(123, "", 123, 1.0, OrderState.PLANNED, null, null));
     }
     public OrderController(@Autowired OrderRepository repository) {
         this.orderRepository = repository;
@@ -33,4 +34,5 @@ public class OrderController {
     public Iterable<Order> getOrders(@RequestParam(required = false, name = "customer") UUID customerId) {
         return customerId != null ? orderRepository.findAllByCustomerId(customerId) : orderRepository.findAll();
     }
+
 }

@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
+import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.Customer;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.OrderState;
@@ -8,6 +9,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderDeleteRespons
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderUpdateRequest;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
+import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.BeanUtils;
@@ -25,10 +27,15 @@ public class CustomerOrderController {
 
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
+    private final TeamRepository teamRepository;
 
-    public CustomerOrderController(@Autowired OrderRepository orderRepository, @Autowired CustomerRepository customerRepository) {
+    public CustomerOrderController(
+            @Autowired OrderRepository orderRepository,
+            @Autowired CustomerRepository customerRepository,
+            @Autowired TeamRepository teamRepository) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
+        this.teamRepository = teamRepository;
     }
 
     @GetMapping
@@ -95,6 +102,12 @@ public class CustomerOrderController {
             order.setDescription(updateRequest.description());
         if(updateRequest.state() != null)
             order.setState(updateRequest.state());
+        if(updateRequest.teamId() != null) {
+            AssemblyTeam team = teamRepository
+                    .findById(updateRequest.teamId())
+                    .orElseThrow(ResourceNotFoundException::new);
+            order.setTeam(team);
+        }
 
         return orderRepository.save(order);
     }
@@ -109,7 +122,15 @@ public class CustomerOrderController {
                 .findByCustomerId(customerId, orderId)
                 .orElseThrow(ResourceNotFoundException::new);
 
-        BeanUtils.copyProperties(updateRequest, order);
+        BeanUtils.copyProperties(updateRequest, order, "teamId");
+
+        AssemblyTeam team = null;
+        if(updateRequest.teamId() != null) {
+            team = teamRepository
+                    .findById(updateRequest.teamId())
+                    .orElseThrow(ResourceNotFoundException::new);
+        }
+        order.setTeam(team);
 
         return orderRepository.save(order);
     }
