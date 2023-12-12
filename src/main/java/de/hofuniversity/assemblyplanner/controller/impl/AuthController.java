@@ -1,4 +1,4 @@
-package de.hofuniversity.assemblyplanner.controller;
+package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.User;

@@ -1,4 +1,4 @@
-package de.hofuniversity.assemblyplanner.controller;
+package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Customer;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
