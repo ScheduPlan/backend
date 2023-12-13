@@ -2,7 +2,9 @@ package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
+import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourceRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.TeamDeleteResponse;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
@@ -13,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/teams")
@@ -85,5 +89,17 @@ public class TeamController {
         TeamDeleteResponse response = new TeamDeleteResponse(team);
         teamRepository.delete(team);
         return response;
+    }
+
+    @GetMapping("/{teamId}/orders")
+    @Operation(summary = "gets all orders for the specified team", responses = {
+            @ApiResponse(responseCode = "404", description = "the specified team does not exist")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderListItem> getOrders(@PathVariable UUID teamId) {
+        AssemblyTeam team = teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
+        Iterable<Order> orders = team.getOrders();
+        return StreamSupport.stream(orders.spliterator(), false)
+                .map(OrderListItem::new).toList();
     }
 }
