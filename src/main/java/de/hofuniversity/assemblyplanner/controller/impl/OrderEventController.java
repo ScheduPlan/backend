@@ -13,6 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -68,6 +69,10 @@ public class OrderEventController {
                 order
         );
 
+        if(!eventRepository.findOverlappingEvents(event).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "event overlaps with another event for the same order");
+        }
+
         return eventRepository.save(event);
     }
 
@@ -85,7 +90,7 @@ public class OrderEventController {
                 .orElseThrow(ResourceNotFoundException::new);
 
         if(patchRequest.date() != null)
-            event.setDate(patchRequest.date());
+            event.setStartDate(patchRequest.date());
         if(patchRequest.type() != null)
             event.setType(patchRequest.type());
         if(patchRequest.name() != null)
