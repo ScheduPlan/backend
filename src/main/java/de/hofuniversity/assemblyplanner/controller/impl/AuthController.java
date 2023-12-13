@@ -2,10 +2,7 @@ package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.User;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.AuthenticationDetails;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeDefinition;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.LoginInfo;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.LoginResponse;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.*;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
 import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
 import de.hofuniversity.assemblyplanner.service.UserService;
@@ -62,8 +59,16 @@ public class AuthController {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginInfo.username(), loginInfo.password()));
 
-       AuthenticationDetails details = authenticationService.createToken((UserDetails) auth.getPrincipal(), Map.of());
+        AuthenticationDetails details = authenticationService.login((UserDetails) auth.getPrincipal(), Map.of());
 
-        return new LoginResponse(details.token(), details.employee().getId());
+        return new LoginResponse(details.token(), details.refreshToken(), details.employee().getId());
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "refresh the current access token using a refresh token")
+    @ResponseStatus(HttpStatus.OK)
+    public RefreshResponse refresh(@RequestBody RefreshRequest refreshRequest) {
+        AuthenticationDetails details = authenticationService.newAccessToken(refreshRequest.refreshToken());
+        return new RefreshResponse(details.token(), details.employee().getId());
     }
 }

@@ -30,14 +30,15 @@ public class UserService implements UserDetailsService {
         return new EmployeeUserDetailsAdapter(loadEmployeeByUsername(username));
     }
 
-    public UserDetails loadUserByToken(TokenDescription token) {
-        if(token.userId() != null)
+    public Employee loadUserByToken(TokenDescription token) {
+        if(token.userId() != null) {
             return employeeRepository
                     .findById(token.userId())
-                    .orElseThrow(() -> new UsernameNotFoundException("user not found"))
-                    .getUser();
-        else if(token.subject() != null)
-            return loadUserByUsername(token.subject());
+                    .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+        }
+        else if(token.subject() != null) {
+            return loadEmployeeByUsername(token.subject());
+        }
 
         return null;
     }

@@ -13,6 +13,6 @@ public record TokenDescription(Date issuedAt, String subject, Date expiry, Map<S
                 claims.getSubject(),
                 claims.getExpiration(),
                 Map.copyOf(claims),
-                (UUID) claims.get("userId"));
+                UUID.fromString((String) claims.get("userId")));
     }
 }
