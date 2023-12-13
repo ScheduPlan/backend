@@ -1,4 +1,4 @@
-package de.hofuniversity.assemblyplanner.persistence.model.dto;
+package de.hofuniversity.assemblyplanner.security.model;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 

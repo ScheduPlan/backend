@@ -3,7 +3,7 @@ package de.hofuniversity.assemblyplanner.service;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.Role;
 import de.hofuniversity.assemblyplanner.persistence.model.User;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.TokenDescription;
+import de.hofuniversity.assemblyplanner.security.model.TokenDescription;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.UserDefinition;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;

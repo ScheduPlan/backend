@@ -1,6 +1,6 @@
 package de.hofuniversity.assemblyplanner.security.filter;
 
-import de.hofuniversity.assemblyplanner.persistence.model.dto.TokenDescription;
+import de.hofuniversity.assemblyplanner.security.model.TokenDescription;
 import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

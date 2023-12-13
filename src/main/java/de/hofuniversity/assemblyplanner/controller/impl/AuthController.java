@@ -5,6 +5,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.User;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.*;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
 import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
+import de.hofuniversity.assemblyplanner.security.model.AuthenticationDetails;
 import de.hofuniversity.assemblyplanner.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;

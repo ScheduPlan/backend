@@ -1,8 +1,8 @@
 package de.hofuniversity.assemblyplanner.security.api;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.AuthenticationDetails;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.TokenDescription;
+import de.hofuniversity.assemblyplanner.security.model.AuthenticationDetails;
+import de.hofuniversity.assemblyplanner.security.model.TokenDescription;
 import de.hofuniversity.assemblyplanner.security.model.TokenType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;

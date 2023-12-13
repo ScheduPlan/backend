@@ -1,8 +1,8 @@
 package de.hofuniversity.assemblyplanner.security.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.AuthenticationDetails;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.TokenDescription;
+import de.hofuniversity.assemblyplanner.security.model.AuthenticationDetails;
+import de.hofuniversity.assemblyplanner.security.model.TokenDescription;
 import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
 import de.hofuniversity.assemblyplanner.security.model.TokenType;
 import de.hofuniversity.assemblyplanner.service.EmployeeUserDetailsAdapter;
