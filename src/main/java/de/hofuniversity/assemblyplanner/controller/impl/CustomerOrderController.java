@@ -6,12 +6,15 @@ import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.OrderState;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderCreateRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderDeleteResponse;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderQuery;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderUpdateRequest;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
+import de.hofuniversity.assemblyplanner.service.api.OrderSearchEngine;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,14 +31,17 @@ public class CustomerOrderController {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final TeamRepository teamRepository;
+    private final OrderSearchEngine orderSearchEngine;
 
     public CustomerOrderController(
             @Autowired OrderRepository orderRepository,
             @Autowired CustomerRepository customerRepository,
-            @Autowired TeamRepository teamRepository) {
+            @Autowired TeamRepository teamRepository,
+            OrderSearchEngine orderSearchEngine) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.teamRepository = teamRepository;
+        this.orderSearchEngine = orderSearchEngine;
     }
 
     @GetMapping
@@ -43,8 +49,9 @@ public class CustomerOrderController {
             @ApiResponse(responseCode = "404", description = "the given customer was not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Order> getOrders(@PathVariable UUID customerId) {
-        return customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new).getOrders();
+    public Iterable<Order> getOrders(@PathVariable UUID customerId, @ParameterObject @ModelAttribute OrderQuery query) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
+        return orderSearchEngine.findOrders(query, customer.getId());
     }
 
     @GetMapping("/{orderId}")
