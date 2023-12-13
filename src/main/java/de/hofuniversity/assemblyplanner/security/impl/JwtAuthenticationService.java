@@ -1,7 +1,10 @@
 package de.hofuniversity.assemblyplanner.security.impl;
 
+import de.hofuniversity.assemblyplanner.persistence.model.Employee;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.AuthenticationDetails;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.TokenDescription;
 import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
+import de.hofuniversity.assemblyplanner.service.EmployeeUserDetailsAdapter;
 import de.hofuniversity.assemblyplanner.service.UserService;
 import de.hofuniversity.assemblyplanner.util.DateUtil;
 import de.hofuniversity.assemblyplanner.util.KeyUtil;
@@ -18,6 +21,7 @@ import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -40,14 +44,29 @@ public class JwtAuthenticationService implements AuthenticationService {
         this.userService = userService;
     }
 
-    public String createToken(UserDetails user, Map<String, Object> claims) {
-        return Jwts.builder()
-                .claims(claims)
+    public AuthenticationDetails createToken(UserDetails user, Map<String, Object> claims) {
+        Employee employee;
+        if(user instanceof EmployeeUserDetailsAdapter ea) {
+            employee = ea.getEmployee();
+        }
+        else {
+            employee = userService.loadEmployeeByUsername(user.getUsername());
+        }
+
+        Map<String, Object> actualClaims = new HashMap<>(claims);
+
+        if(!actualClaims.containsKey("userId"))
+            actualClaims.put("userId", employee.getId());
+
+        String token = Jwts.builder()
+                .claims(actualClaims)
                 .subject(user.getUsername())
                 .issuedAt(new Date())
                 .expiration(DateUtil.toDate(Instant.now().plus(validity)))
                 .signWith(signKey)
                 .compact();
+
+        return new AuthenticationDetails(employee, token);
     }
 
     public TokenDescription parseToken(String token) {
@@ -57,7 +76,7 @@ public class JwtAuthenticationService implements AuthenticationService {
 
     @Override
     public UsernamePasswordAuthenticationToken toUsernamePasswordAuthenticationToken(TokenDescription token) {
-        UserDetails user = userService.loadUserByUsername(token.subject());
+        UserDetails user = userService.loadUserByToken(token);
         return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
     }
 }

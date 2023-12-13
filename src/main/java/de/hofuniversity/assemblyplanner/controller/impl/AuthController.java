@@ -2,6 +2,7 @@ package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.User;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.AuthenticationDetails;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeDefinition;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.LoginInfo;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.LoginResponse;
@@ -61,7 +62,8 @@ public class AuthController {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginInfo.username(), loginInfo.password()));
 
-        String token = authenticationService.createToken((UserDetails) auth.getPrincipal(), Map.of());
-        return new LoginResponse(token);
+       AuthenticationDetails details = authenticationService.createToken((UserDetails) auth.getPrincipal(), Map.of());
+
+        return new LoginResponse(details.token(), details.employee().getId());
     }
 }

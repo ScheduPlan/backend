@@ -1,4 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model.dto;
 
-public record LoginResponse(String token) {
+import java.util.UUID;
+
+public record LoginResponse(String token, UUID userId) {
 }
