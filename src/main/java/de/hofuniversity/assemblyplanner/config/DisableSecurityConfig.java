@@ -19,7 +19,8 @@ public class DisableSecurityConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationProvider authenticationProvider, AuthenticationService authenticationService) throws Exception {
-        http.authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**")).permitAll())
+        http.authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/auth/login")).permitAll())
+                .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/auth/self")).authenticated())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/swagger-ui/**")).permitAll())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/v3/api-docs/**")).permitAll())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/error")).permitAll())

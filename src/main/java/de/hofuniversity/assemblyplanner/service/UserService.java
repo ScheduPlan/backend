@@ -8,6 +8,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.UserDefinition;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -49,32 +50,51 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
     }
 
-    public User createUser(UserDefinition definition) {
+    public User createUser(UserDefinition definition, boolean skipValidation) {
         String hashedPassword = passwordEncoder.encode(definition.password());
-        return new User(
+        User user = new User(
                 definition.username(),
                 definition.email(),
                 hashedPassword,
                 Role.FITTER
         );
+
+        if(definition.role() != Role.FITTER && !skipValidation)
+            promoteUser(user, definition.role());
+        else
+            user.setRole(definition.role());
+
+        return user;
     }
 
-    public User promoteUser(User user, Role role) {
-        UserDetails currentUserDetails =
-                (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public User createUser(UserDefinition definition) {
+        return createUser(definition, false);
+    }
 
-        int currentRoleOrdinal = currentUserDetails
-                .getAuthorities()
-                .stream()
-                .map(a -> Role.valueOf(a.getAuthority()).ordinal())
-                .max(Comparator.comparingInt(Integer::intValue))
-                .orElseThrow();
+    public Employee getCurrentUser() {
+        return ((EmployeeUserDetailsAdapter) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmployee();
+    }
 
-        if(currentRoleOrdinal <= role.ordinal())
-            throw new InsufficientAuthenticationException("users with role " + Role.values()[currentRoleOrdinal]
+    private String sanitizeRoleString(String roleStr) {
+        if(!roleStr.startsWith(User.ROLE_PREFIX))
+            return roleStr;
+        return roleStr.substring(User.ROLE_PREFIX.length());
+    }
+
+    public boolean hasRole(User user, Role role) {
+        String roleStr = role.toString();
+        return user.getAuthorities().stream()
+                .anyMatch(r -> sanitizeRoleString(r.getAuthority()).equals(roleStr));
+    }
+
+    public void promoteUser(User user, Role role) {
+        EmployeeUserDetailsAdapter currentUserDetails =
+                (EmployeeUserDetailsAdapter) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(!hasRole(currentUserDetails.getEmployee().getUser(), role))
+            throw new InsufficientAuthenticationException("users with role " + currentUserDetails.getEmployee().getUser().getRole()
             + " are not authorized to promote other users to role " + role);
 
         user.setRole(role);
-        return user;
     }
 }

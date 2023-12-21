@@ -11,6 +11,7 @@ import java.util.*;
 
 @Embeddable
 public class User implements Serializable, UserDetails {
+    public static final String ROLE_PREFIX = "ROLE_";
     private String userName;
     private String password;
     private String email;
@@ -64,11 +65,11 @@ public class User implements Serializable, UserDetails {
         ArrayList<GrantedAuthority> authorities = new ArrayList<>(3);
         switch (role) {
             case ADMINISTRATOR:
-                authorities.add(new SimpleGrantedAuthority(Role.ADMINISTRATOR.toString()));
+                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.ADMINISTRATOR.toString()));
             case MANAGER:
-                authorities.add(new SimpleGrantedAuthority(Role.MANAGER.toString()));
+                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.MANAGER.toString()));
             case FITTER:
-                authorities.add(new SimpleGrantedAuthority(Role.FITTER.toString()));
+                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.FITTER.toString()));
         }
         return authorities;
     }

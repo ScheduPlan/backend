@@ -9,8 +9,10 @@ import de.hofuniversity.assemblyplanner.security.model.AuthenticationDetails;
 import de.hofuniversity.assemblyplanner.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,7 +23,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-@SecurityRequirements
 public class AuthController {
 
     private final EmployeeRepository employeeRepository;
@@ -40,9 +41,11 @@ public class AuthController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/register")
-    @Operation(summary = "registers a new employee")
+    @PostMapping("/create")
+    @Operation(summary = "create a new employee.", description = "creates a new employee. " +
+            "If a role is not explicitly defined, FITTER will be used. May only be called by ADMINISTRATORS.")
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"ADMINISTRATOR", "MANAGER"})
     public Employee register(@RequestBody EmployeeDefinition employeeDefinition) {
         User user = userService.createUser(employeeDefinition.userDefinition());
         Employee employee = new Employee(
@@ -53,9 +56,17 @@ public class AuthController {
         return employeeRepository.save(employee);
     }
 
+    @GetMapping("/self")
+    @Operation(summary = "returns information about the logged-in user")
+    @ResponseStatus(HttpStatus.OK)
+    public Employee getSelf() {
+        return userService.getCurrentUser();
+    }
+
     @PostMapping("/login")
     @Operation(summary = "log in to the service")
     @ResponseStatus(HttpStatus.OK)
+    @SecurityRequirements
     public LoginResponse login(@RequestBody LoginInfo loginInfo) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginInfo.username(), loginInfo.password()));
