@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,6 +23,7 @@ public class DisableSecurityConfig {
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/swagger-ui/**")).permitAll())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/v3/api-docs/**")).permitAll())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/error")).permitAll())
+                .authorizeHttpRequests(x -> x.requestMatchers(HttpMethod.OPTIONS).permitAll())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/**")).authenticated())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(new JwtAuthFilterComponent(authenticationService), UsernamePasswordAuthenticationFilter.class)
