@@ -18,12 +18,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class DisableSecurityConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SecurityFilterChain filterChain2(HttpSecurity http, AuthenticationProvider authenticationProvider, AuthenticationService authenticationService) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationProvider authenticationProvider, AuthenticationService authenticationService) throws Exception {
         http.authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/auth/**")).permitAll())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/swagger-ui/**")).permitAll())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/v3/api-docs/**")).permitAll())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/error")).permitAll())
-                .authorizeHttpRequests(x -> x.requestMatchers(HttpMethod.OPTIONS).permitAll())
+                .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.OPTIONS)).permitAll())
                 .authorizeHttpRequests(x -> x.requestMatchers(AntPathRequestMatcher.antMatcher("/**")).authenticated())
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(new JwtAuthFilterComponent(authenticationService), UsernamePasswordAuthenticationFilter.class)
