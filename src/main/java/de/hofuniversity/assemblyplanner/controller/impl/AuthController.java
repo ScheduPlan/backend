@@ -43,7 +43,9 @@ public class AuthController {
 
     @PostMapping("/create")
     @Operation(summary = "create a new employee.", description = "creates a new employee. " +
-            "If a role is not explicitly defined, FITTER will be used. May only be called by ADMINISTRATORS.")
+            "If a role is not explicitly defined, FITTER will be used. " +
+            "May only be called by ADMINISTRATORS or MANAGERS. " +
+            "MANAGERS may only create users with role MANAGER or below.")
     @ResponseStatus(HttpStatus.CREATED)
     @RolesAllowed({"ADMINISTRATOR", "MANAGER"})
     public Employee register(@RequestBody EmployeeDefinition employeeDefinition) {
