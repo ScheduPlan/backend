@@ -2,8 +2,10 @@ package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
+import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourceRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.TeamDeleteResponse;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
@@ -102,4 +104,16 @@ public class TeamController {
         return StreamSupport.stream(orders.spliterator(), false)
                 .map(OrderListItem::new).toList();
     }
+
+    @GetMapping("/{teamId}/members")
+    @Operation(summary = "gets all members for the specified team", responses = {
+            @ApiResponse(responseCode = "404", description = "the specified team does not exist")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public List<EmployeeListItem> getMembers(@PathVariable UUID teamId) {
+        AssemblyTeam team = teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
+        List<Employee> employees = team.getEmployees();
+        return employees.stream().map(EmployeeListItem::new).toList();
+    }
+
 }
