@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
+import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.User;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.*;
@@ -20,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,17 +29,14 @@ public class AuthController {
 
     private final EmployeeRepository employeeRepository;
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
     private final AuthenticationService authenticationService;
 
     public AuthController(
             @Autowired EmployeeRepository employeeRepository,
             @Autowired UserService userService,
-            @Autowired AuthenticationManager authenticationManager,
             @Autowired AuthenticationService authenticationService) {
         this.employeeRepository = employeeRepository;
         this.userService = userService;
-        this.authenticationManager = authenticationManager;
         this.authenticationService = authenticationService;
     }
 
@@ -70,10 +69,7 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     @SecurityRequirements
     public LoginResponse login(@RequestBody LoginInfo loginInfo) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginInfo.username(), loginInfo.password()));
-
-        AuthenticationDetails details = authenticationService.login((UserDetails) auth.getPrincipal(), Map.of());
+        AuthenticationDetails details = authenticationService.login(loginInfo.username(), loginInfo.password());
 
         return new LoginResponse(details.token(), details.refreshToken(), details.employee().getId());
     }
@@ -84,5 +80,24 @@ public class AuthController {
     public RefreshResponse refresh(@RequestBody RefreshRequest refreshRequest) {
         AuthenticationDetails details = authenticationService.newAccessToken(refreshRequest.refreshToken());
         return new RefreshResponse(details.token(), details.employee().getId());
+    }
+
+    @PostMapping("/reset")
+    @Operation(summary = "change a user's password", description = "changes a user's password." +
+            " If only \"password\" is given, changes the password of the logged-in user." +
+            " If password and userId is given, the user's password is changed without validating the logged-in user." +
+            " This operation may only be performed by administrators or managers. Only users with a role lower than" +
+            " the current user's role can be changed.")
+    public void reset(@RequestBody PasswordUpdateRequest pwUpdateRequest) {
+        if(pwUpdateRequest.userId() == null) {
+            userService.changePassword(pwUpdateRequest.password());
+            return;
+        }
+
+        Employee user = employeeRepository
+                .findById(pwUpdateRequest.userId())
+                .orElseThrow(ResourceNotFoundException::new);
+
+        userService.changePassword(user, pwUpdateRequest.password());
     }
 }

@@ -3,20 +3,19 @@ package de.hofuniversity.assemblyplanner.service;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.Role;
 import de.hofuniversity.assemblyplanner.persistence.model.User;
-import de.hofuniversity.assemblyplanner.security.model.TokenDescription;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.UserDefinition;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
+import de.hofuniversity.assemblyplanner.security.model.TokenDescription;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -32,16 +31,17 @@ public class UserService implements UserDetailsService {
     }
 
     public Employee loadUserByToken(TokenDescription token) {
+        Employee employee = null;
         if(token.userId() != null) {
-            return employeeRepository
+            employee = employeeRepository
                     .findById(token.userId())
                     .orElseThrow(() -> new UsernameNotFoundException("user not found"));
         }
         else if(token.subject() != null) {
-            return loadEmployeeByUsername(token.subject());
+            employee = loadEmployeeByUsername(token.subject());
         }
 
-        return null;
+        return employee;
     }
 
     public Employee loadEmployeeByUsername(String username) {
@@ -72,7 +72,10 @@ public class UserService implements UserDetailsService {
     }
 
     public Employee getCurrentUser() {
-        return ((EmployeeUserDetailsAdapter) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmployee();
+        Object auth = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(auth == null)
+            return null;
+        return ((EmployeeUserDetailsAdapter) auth).getEmployee();
     }
 
     private String sanitizeRoleString(String roleStr) {
@@ -88,13 +91,35 @@ public class UserService implements UserDetailsService {
     }
 
     public void promoteUser(User user, Role role) {
-        EmployeeUserDetailsAdapter currentUserDetails =
-                (EmployeeUserDetailsAdapter) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Employee currentUser = getCurrentUser();
 
-        if(!hasRole(currentUserDetails.getEmployee().getUser(), role))
-            throw new InsufficientAuthenticationException("users with role " + currentUserDetails.getEmployee().getUser().getRole()
+        if(currentUser == null || !hasRole(currentUser.getUser(), role))
+            throw new InsufficientAuthenticationException("users with role " + currentUser.getUser().getRole()
             + " are not authorized to promote other users to role " + role);
 
         user.setRole(role);
+    }
+
+    private void savePassword(Employee user, String newPassword) {
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.getUser().setPassword(encodedPassword);
+        employeeRepository.save(user);
+    }
+
+    public void changePassword(String newPassword) {
+        Employee currentUser = getCurrentUser();
+        if(currentUser == null)
+            throw new InsufficientAuthenticationException("user not authenticated");
+
+        savePassword(currentUser, newPassword);
+    }
+
+    public void changePassword(Employee user, String newPassword) {
+        User current = getCurrentUser().getUser();
+        if(!hasRole(current, Role.MANAGER) || user.getUser().getRole().ordinal() >= current.getRole().ordinal())
+            throw new InsufficientAuthenticationException("users with role " + current.getRole() +
+                    " are not allowed to change passwords for users with role " + user.getUser().getRole());
+
+        savePassword(user, newPassword);
     }
 }

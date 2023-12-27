@@ -14,6 +14,8 @@ import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -34,14 +36,17 @@ public class JwtAuthenticationService implements AuthenticationService {
     private final Key signKey;
     private final JwtParser parser;
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
     public JwtAuthenticationService(@Value("${auth.validity.minutes:60}") int validityInMinutes,
                                     @Value("${auth.validity.sign-key:#{null}}") String signKey,
                                     @Value("${auth.refresh.validity.hours:1}") int refreshValidityInHours,
-                                    @Autowired UserService userService) {
+                                    @Autowired UserService userService,
+                                    @Autowired AuthenticationManager authenticationManager) {
 
         this.validity = Duration.ofMinutes(validityInMinutes);
         this.refreshValidity = Duration.ofHours(refreshValidityInHours);
+        this.authenticationManager = authenticationManager;
 
         if(signKey == null)
             this.signKey = KeyUtil.randomKey(Jwts.SIG.HS512);
@@ -50,6 +55,17 @@ public class JwtAuthenticationService implements AuthenticationService {
 
         this.parser = Jwts.parser().verifyWith((SecretKey) this.signKey).build();
         this.userService = userService;
+    }
+
+    private void throwIfTokenIsSuperseded(Employee employee, TokenDescription token) {
+        if(employee == null || employee.getUser() == null)
+            return;
+
+        Date pwChangedDate = employee.getUser().getLastPasswordChange();
+        if(pwChangedDate == null || token.issuedAt().after(pwChangedDate))
+            return;
+
+        throw new AccessDeniedException("this token is invalid. The password has been changed after the issuedAt date.");
     }
 
     @Override
@@ -67,6 +83,10 @@ public class JwtAuthenticationService implements AuthenticationService {
                 || !employee.getUser().isCredentialsNonExpired()) {
             throw new AccessDeniedException("user is disabled or required manual refresh");
         }
+
+        Date pwChangedDate = employee.getUser().getLastPasswordChange();
+        if(pwChangedDate != null && description.issuedAt().before(pwChangedDate))
+            throw new AccessDeniedException("this token is invalid. The password has been changed after the issuedAt date.");
 
         String accessToken = createToken(employee, Map.of());
 
@@ -125,7 +145,14 @@ public class JwtAuthenticationService implements AuthenticationService {
 
     @Override
     public UsernamePasswordAuthenticationToken toUsernamePasswordAuthenticationToken(TokenDescription token) {
-        UserDetails user = new EmployeeUserDetailsAdapter(userService.loadUserByToken(token));
+        EmployeeUserDetailsAdapter user = new EmployeeUserDetailsAdapter(userService.loadUserByToken(token));
+        throwIfTokenIsSuperseded(user.getEmployee(), token);
         return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+    }
+
+    @Override
+    public AuthenticationDetails login(String username, String password) {
+        var auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        return login((UserDetails) auth.getPrincipal(), Map.of());
     }
 }

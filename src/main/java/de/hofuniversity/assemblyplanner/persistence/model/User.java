@@ -19,6 +19,7 @@ public class User implements Serializable, UserDetails {
     private Date expiryDate;
     private boolean locked;
     private boolean enabled = true;
+    private Date lastPasswordChange = new Date();
 
     public User(String userName, String email, String password, Role role, Date expiryDate) {
         this.userName = userName;
@@ -106,6 +107,8 @@ public class User implements Serializable, UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+        this.lastPasswordChange = new Date();
+        this.expiryDate = null;
     }
 
     public Role getRole() {
@@ -114,6 +117,10 @@ public class User implements Serializable, UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Date getLastPasswordChange() {
+        return lastPasswordChange;
     }
 
     @Override

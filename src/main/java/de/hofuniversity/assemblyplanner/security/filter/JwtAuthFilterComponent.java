@@ -7,6 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -36,10 +38,14 @@ public class JwtAuthFilterComponent extends OncePerRequestFilter {
         }
 
         token = token.substring(BEARER_IDENTIFIER.length());
-        TokenDescription tokenDescription = authenticationService.parseToken(token);
-        request.setAttribute("token", tokenDescription);
-        SecurityContextHolder.getContext()
-                .setAuthentication(authenticationService.toUsernamePasswordAuthenticationToken(tokenDescription));
+        try {
+            TokenDescription tokenDescription = authenticationService.parseToken(token);
+            request.setAttribute("token", tokenDescription);
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authenticationService.toUsernamePasswordAuthenticationToken(tokenDescription));
+        } catch (AccessDeniedException | InsufficientAuthenticationException e) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
 
         filterChain.doFilter(request, response);
     }

@@ -23,4 +23,6 @@ public interface AuthenticationService {
 
     TokenDescription parseToken(String token);
     UsernamePasswordAuthenticationToken toUsernamePasswordAuthenticationToken(TokenDescription token);
+
+    AuthenticationDetails login(String username, String password);
 }
