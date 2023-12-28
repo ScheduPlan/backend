@@ -49,7 +49,7 @@ public class OrderEventController {
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
-    @PostMapping("/{eventId}")
+    @PostMapping
     @Operation(summary = "creates an event", responses = {
             @ApiResponse(responseCode = "404", description = "the requested order or customer was not found")
     })
@@ -64,11 +64,15 @@ public class OrderEventController {
 
         Event event = new Event(
                 createRequest.date(),
+                createRequest.endDate(),
                 new Description(createRequest.name(), createRequest.description()),
                 null,
                 createRequest.type(),
                 order
         );
+
+        if(createRequest.endDate() != null && createRequest.date().after(createRequest.endDate()))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "creating events with an end date prior to the start date is forbidden.");
 
         if(!eventRepository.findOverlappingEvents(event).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "event overlaps with another event for the same order");

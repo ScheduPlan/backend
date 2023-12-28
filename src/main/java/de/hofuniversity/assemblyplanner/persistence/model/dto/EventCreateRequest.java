@@ -10,6 +10,8 @@ public record EventCreateRequest(
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         @NonNull
         Date date,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+        Date endDate,
         EventType type,
         @NonNull
         String name,
