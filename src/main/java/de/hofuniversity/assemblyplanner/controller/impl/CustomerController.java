@@ -2,10 +2,13 @@ package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Customer;
 import de.hofuniversity.assemblyplanner.persistence.model.Person;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.CustomerQuery;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.CustomerRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.specification.CustomerSpecification;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,8 +31,8 @@ public class CustomerController {
     @GetMapping
     @Operation(summary = "gets all customers")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Customer> getCustomers() {
-        return customerRepository.findAll();
+    public Iterable<Customer> getCustomers(@ParameterObject @ModelAttribute CustomerQuery query) {
+        return customerRepository.findAll(new CustomerSpecification(query));
     }
 
     @GetMapping(value = "/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
