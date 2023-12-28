@@ -14,6 +14,7 @@ import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.service.api.OrderSearchEngine;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class CustomerOrderController {
             )
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public Order createOrder(@PathVariable UUID customerId, @RequestBody OrderCreateRequest orderRequest) {
+    public Order createOrder(@PathVariable UUID customerId, @RequestBody @Valid OrderCreateRequest orderRequest) {
         Customer customer = customerRepository
                 .findById(customerId)
                 .orElseThrow(ResourceNotFoundException::new);

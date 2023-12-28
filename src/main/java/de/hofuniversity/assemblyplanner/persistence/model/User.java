@@ -1,6 +1,7 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,8 +13,11 @@ import java.util.*;
 @Embeddable
 public class User implements Serializable, UserDetails {
     public static final String ROLE_PREFIX = "ROLE_";
+
+    @Column(unique = true)
     private String userName;
     private String password;
+    @Column(unique = true)
     private String email;
     private Role role;
     private Date expiryDate;
@@ -66,11 +70,11 @@ public class User implements Serializable, UserDetails {
         ArrayList<GrantedAuthority> authorities = new ArrayList<>(3);
         switch (role) {
             case ADMINISTRATOR:
-                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.ADMINISTRATOR.toString()));
+                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.ADMINISTRATOR));
             case MANAGER:
-                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.MANAGER.toString()));
+                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.MANAGER));
             case FITTER:
-                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.FITTER.toString()));
+                authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + Role.FITTER));
         }
         return authorities;
     }

@@ -1,10 +1,7 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +9,7 @@ import java.util.Objects;
 @Entity
 public class Customer extends Person {
     private String company;
+    @Column(unique = true)
     private int customerNumber;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")

@@ -1,4 +1,10 @@
 package de.hofuniversity.assemblyplanner.persistence.model.dto;
 
-public record LoginInfo(String username, String password) {
-}
+import org.springframework.lang.NonNull;
+
+public record LoginInfo(
+        @NonNull
+        String username,
+        @NonNull
+        String password
+) { }

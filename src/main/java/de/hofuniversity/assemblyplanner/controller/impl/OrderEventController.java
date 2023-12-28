@@ -9,6 +9,7 @@ import de.hofuniversity.assemblyplanner.persistence.repository.EventRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,7 +56,7 @@ public class OrderEventController {
     @ResponseStatus(HttpStatus.CREATED)
     public Event createEvent(@PathVariable UUID customerId,
                              @PathVariable UUID orderId,
-                             @RequestParam EventCreateRequest createRequest)
+                             @RequestBody @Valid EventCreateRequest createRequest)
     {
         Order order = orderRepository
                 .findByCustomerId(customerId, orderId)

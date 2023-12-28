@@ -11,6 +11,7 @@ import de.hofuniversity.assemblyplanner.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -68,7 +69,7 @@ public class AuthController {
     @Operation(summary = "log in to the service")
     @ResponseStatus(HttpStatus.OK)
     @SecurityRequirements
-    public LoginResponse login(@RequestBody LoginInfo loginInfo) {
+    public LoginResponse login(@RequestBody @Valid LoginInfo loginInfo) {
         AuthenticationDetails details = authenticationService.login(loginInfo.username(), loginInfo.password());
 
         return new LoginResponse(details.token(), details.refreshToken(), details.employee().getId());
@@ -77,7 +78,7 @@ public class AuthController {
     @PostMapping("/refresh")
     @Operation(summary = "refresh the current access token using a refresh token")
     @ResponseStatus(HttpStatus.OK)
-    public RefreshResponse refresh(@RequestBody RefreshRequest refreshRequest) {
+    public RefreshResponse refresh(@RequestBody @Valid RefreshRequest refreshRequest) {
         AuthenticationDetails details = authenticationService.newAccessToken(refreshRequest.refreshToken());
         return new RefreshResponse(details.token(), details.employee().getId());
     }

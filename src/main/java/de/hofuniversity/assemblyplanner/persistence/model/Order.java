@@ -2,6 +2,7 @@ package de.hofuniversity.assemblyplanner.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 import java.util.Set;
@@ -17,6 +18,7 @@ public class Order {
     private String description;
     private Integer commissionNumber;
     private Double weight;
+    @NonNull
     private OrderState state;
 
     @ManyToOne

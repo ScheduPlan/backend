@@ -8,6 +8,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.specification.Customer
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class CustomerController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "creates a customer")
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer createCustomer(@RequestBody CustomerRequest customerRequest) {
+    public Customer createCustomer(@RequestBody @Valid CustomerRequest customerRequest) {
         Customer customer = new Customer(
                 customerRequest.company(),
                 customerRequest.customerNumber(),

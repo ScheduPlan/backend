@@ -1,22 +1,33 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
 import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {
+                "country", "street", "streetNumber", "city", "zip", "description", "addressSuffix", "addressType", "customer_id"
+        })
+})
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String country;
+    @NonNull
     private String street;
+    @NonNull
     private Integer streetNumber;
+    @NonNull
     private String city;
+    @NonNull
     private String zip;
     private String description;
     private String addressSuffix;
+    @NonNull
     private AddressType addressType;
 
     //by using this dummy value, we prevent JPA from JOINing the two tables.

@@ -1,4 +1,7 @@
 package de.hofuniversity.assemblyplanner.persistence.model.dto;
 
-public record RefreshRequest(String refreshToken) {
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.lang.NonNull;
+
+public record RefreshRequest(@NonNull @NotBlank String refreshToken) {
 }

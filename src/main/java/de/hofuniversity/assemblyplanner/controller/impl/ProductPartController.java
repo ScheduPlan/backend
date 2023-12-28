@@ -10,6 +10,7 @@ import de.hofuniversity.assemblyplanner.persistence.repository.PartRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +54,7 @@ public class ProductPartController {
             @ApiResponse(responseCode = "404", description = "the requested part or product was not found")
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public Product addPart(@PathVariable UUID productId, @RequestBody ProductPartAppendRequest appendRequest) {
+    public Product addPart(@PathVariable UUID productId, @RequestBody @Valid ProductPartAppendRequest appendRequest) {
         Product product = productRepository.findById(productId).orElseThrow(ResourceNotFoundException::new);
         Part part = partRepository.findById(appendRequest.partId()).orElseThrow(ResourceNotFoundException::new);
         product.addPart(part, appendRequest.amount());

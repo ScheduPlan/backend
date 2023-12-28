@@ -7,6 +7,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.PartRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +45,7 @@ public class PartController {
     @PostMapping
     @Operation(summary = "creates a part")
     @ResponseStatus(HttpStatus.CREATED)
-    public Part createPart(@RequestBody DescribableResourceRequest partCreateRequest) {
+    public Part createPart(@RequestBody @Valid DescribableResourceRequest partCreateRequest) {
         Part part = new Part(
                 new Description(partCreateRequest.name(),
                         partCreateRequest.description()

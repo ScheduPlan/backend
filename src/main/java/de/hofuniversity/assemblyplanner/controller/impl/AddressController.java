@@ -10,6 +10,7 @@ import de.hofuniversity.assemblyplanner.persistence.repository.AddressRepository
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class AddressController {
             @ApiResponse(responseCode = "404", description = "the customer wasn't found")
     })
     @ResponseStatus(HttpStatus.CREATED)
-    public Address createAddress(@PathVariable UUID customerId, @RequestBody AddressCreateRequest createRequest) {
+    public Address createAddress(@PathVariable UUID customerId, @RequestBody @Valid AddressCreateRequest createRequest) {
         Customer customer = customerRepository
                 .findById(customerId)
                 .orElseThrow(ResourceNotFoundException::new);

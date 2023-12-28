@@ -1,18 +1,18 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 
 @Entity
 public class Employee extends Person {
+    @Column(unique = true)
+    @NonNull
     private Integer employeeNumber;
     private String position;
     @ManyToOne private AssemblyTeam team;
-    @OneToOne private Address address;
+    @OneToOne(cascade = CascadeType.ALL) private Address address;
     @Embedded private User user;
 
     public Employee(String firstName, String lastName, Integer employeeNumber, String position, AssemblyTeam team, Address address, User user) {

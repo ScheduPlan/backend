@@ -12,6 +12,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class TeamController {
     @PostMapping
     @Operation(summary = "creates a team")
     @ResponseStatus(HttpStatus.CREATED)
-    public AssemblyTeam createTeam(@RequestBody DescribableResourceRequest teamCreateRequest) {
+    public AssemblyTeam createTeam(@RequestBody @Valid DescribableResourceRequest teamCreateRequest) {
         AssemblyTeam team = new AssemblyTeam(
                 new Description(teamCreateRequest.name(), teamCreateRequest.description()), null, null);
 

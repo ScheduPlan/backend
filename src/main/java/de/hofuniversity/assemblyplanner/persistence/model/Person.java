@@ -2,6 +2,7 @@ package de.hofuniversity.assemblyplanner.persistence.model;
 
 import de.hofuniversity.assemblyplanner.persistence.model.dto.PersonRequest;
 import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -11,7 +12,9 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     protected UUID id;
+    @NonNull
     protected String firstName;
+    @NonNull
     protected String lastName;
 
     public UUID getId() {

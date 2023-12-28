@@ -9,6 +9,7 @@ import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class ProductController {
     @PostMapping
     @Operation(summary = "creates a new product")
     @ResponseStatus(HttpStatus.CREATED)
-    public Product createProduct(@RequestBody ProductCreateRequest createRequest) {
+    public Product createProduct(@RequestBody @Valid ProductCreateRequest createRequest) {
         Product product = new Product(
                 new Description(createRequest.name(), createRequest.description()),
                 createRequest.materialWidth(),

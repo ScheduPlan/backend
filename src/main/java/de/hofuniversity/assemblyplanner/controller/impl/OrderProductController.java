@@ -9,6 +9,7 @@ import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class OrderProductController {
     public Order addProduct(
             @PathVariable UUID customerId,
             @PathVariable UUID orderId,
-            @RequestBody @Parameter(description = "A special object describing the products to add to the order. " +
+            @RequestBody @Valid @Parameter(description = "A special object describing the products to add to the order. " +
                     "See the schema description for details. Entries which would result in duplicate associations are skipped. " +
                     "Duplicated IDs in the describing request object are also removed prior to processing the request.")
             ProductAppendRequest request) {

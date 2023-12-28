@@ -2,6 +2,7 @@ package de.hofuniversity.assemblyplanner.persistence.model;
 
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.util.Date;
 import java.util.Objects;
@@ -13,6 +14,7 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @NonNull
     private Date startDate;
     private Date endDate;
     @Embedded private Description description;
