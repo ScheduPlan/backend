@@ -46,8 +46,8 @@ public class CustomerSpecification implements Specification<Customer> {
             ));
         }
 
-        if(this.query.addressQuery() != null) {
-            var addressSpecification = new AddressSpecification(this.query.addressQuery());
+        if(this.query.address() != null) {
+            var addressSpecification = new AddressSpecification(this.query.address());
             var sub = query.subquery(Address.class);
             var subRoot = sub.from(Address.class);
             sub = sub.select(subRoot.get("id"))
