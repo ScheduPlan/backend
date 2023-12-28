@@ -4,10 +4,13 @@ import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.Address;
 import de.hofuniversity.assemblyplanner.persistence.model.Customer;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.AddressCreateRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.AddressQuery;
+import de.hofuniversity.assemblyplanner.persistence.model.specification.AddressSpecification;
 import de.hofuniversity.assemblyplanner.persistence.repository.AddressRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,8 +34,8 @@ public class AddressController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "retrieves all addresses for a given customer")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Address> getAddresses(@PathVariable UUID customerId) {
-        return addressRepository.getAddressesByCustomer(customerId);
+    public Iterable<Address> getAddresses(@PathVariable UUID customerId, @ParameterObject @ModelAttribute AddressQuery query) {
+        return addressRepository.findAll(new AddressSpecification(query, customerId));
     }
 
     @GetMapping(value = "/{addressId}", produces = MediaType.APPLICATION_JSON_VALUE)
