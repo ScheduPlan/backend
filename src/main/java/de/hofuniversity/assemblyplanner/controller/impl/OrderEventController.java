@@ -98,6 +98,9 @@ public class OrderEventController {
         if(patchRequest.description() != null)
             event.getDescription().setDescription(patchRequest.description());
 
+        if(!eventRepository.findOverlappingEvents(event).isEmpty())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "event overlaps with another event for the same order");
+
         return eventRepository.save(event);
     }
 
@@ -115,6 +118,8 @@ public class OrderEventController {
                 .orElseThrow(ResourceNotFoundException::new);
 
         BeanUtils.copyProperties(putRequest, event);
+        if(!eventRepository.findOverlappingEvents(event).isEmpty())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "event overlaps with another event for the same order");
 
         return eventRepository.save(event);
     }

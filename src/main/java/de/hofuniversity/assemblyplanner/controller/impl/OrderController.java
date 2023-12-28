@@ -19,16 +19,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
-    private final OrderRepository orderRepository;
     private final OrderSearchEngine orderSearchEngine;
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void createOrder(ApplicationReadyEvent evt) {
-        orderRepository.save(
-                new Order(123, "", 123, 1.0, OrderState.PLANNED, null, null));
-    }
-    public OrderController(@Autowired OrderRepository repository, OrderSearchEngine orderSearchEngine) {
-        this.orderRepository = repository;
+    @Autowired
+    public OrderController(OrderRepository repository, OrderSearchEngine orderSearchEngine) {
         this.orderSearchEngine = orderSearchEngine;
     }
 

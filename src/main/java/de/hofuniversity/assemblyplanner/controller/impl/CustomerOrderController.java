@@ -66,8 +66,8 @@ public class CustomerOrderController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "creates a new order for the customer", responses = {
             @ApiResponse(
-                    responseCode = "415",
-                    description = "the customer for which the order is supposed to be created does not exist"
+                    responseCode = "404",
+                    description = "the customer or team for which the order is supposed to be created does not exist"
             )
     })
     @ResponseStatus(HttpStatus.CREATED)
@@ -76,13 +76,20 @@ public class CustomerOrderController {
                 .findById(customerId)
                 .orElseThrow(ResourceNotFoundException::new);
 
+        AssemblyTeam team = null;
+        if(orderRequest.teamId() != null)
+            team = teamRepository
+                    .findById(orderRequest.teamId())
+                    .orElseThrow(ResourceNotFoundException::new);
+
         Order order = new Order(orderRequest.number(),
                 orderRequest.description(),
                 orderRequest.commissionNumber(),
                 orderRequest.weight(),
                 OrderState.PLANNED,
                 customer,
-                null);
+                null,
+                team);
 
         order = orderRepository.save(order);
 

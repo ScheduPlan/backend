@@ -30,7 +30,7 @@ public class Order {
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private AssemblyTeam team;
 
-    public Order(Integer number, String description, Integer commissionNumber, Double weight, OrderState state, Customer customer, Set<Event> events) {
+    public Order(Integer number, String description, Integer commissionNumber, Double weight, OrderState state, Customer customer, Set<Event> events, AssemblyTeam team) {
         this.number = number;
         this.description = description;
         this.commissionNumber = commissionNumber;
@@ -38,6 +38,7 @@ public class Order {
         this.state = state;
         this.customer = customer;
         this.events = events;
+        this.team = team;
     }
 
     public Order() {
