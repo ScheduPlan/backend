@@ -22,7 +22,7 @@ public class OrderController {
     private final OrderSearchEngine orderSearchEngine;
 
     @Autowired
-    public OrderController(OrderRepository repository, OrderSearchEngine orderSearchEngine) {
+    public OrderController(OrderSearchEngine orderSearchEngine) {
         this.orderSearchEngine = orderSearchEngine;
     }
 
