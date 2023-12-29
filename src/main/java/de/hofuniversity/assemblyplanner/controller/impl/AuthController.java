@@ -1,10 +1,12 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
+import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.User;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.*;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
+import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
 import de.hofuniversity.assemblyplanner.security.model.AuthenticationDetails;
 import de.hofuniversity.assemblyplanner.service.UserService;
@@ -29,16 +31,19 @@ import java.util.UUID;
 public class AuthController {
 
     private final EmployeeRepository employeeRepository;
+    private final TeamRepository teamRepository;
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
     public AuthController(
             @Autowired EmployeeRepository employeeRepository,
             @Autowired UserService userService,
-            @Autowired AuthenticationService authenticationService) {
+            @Autowired AuthenticationService authenticationService,
+            @Autowired TeamRepository teamRepository) {
         this.employeeRepository = employeeRepository;
         this.userService = userService;
         this.authenticationService = authenticationService;
+        this.teamRepository = teamRepository;
     }
 
     @PostMapping("/create")
@@ -50,11 +55,24 @@ public class AuthController {
     @RolesAllowed({"ADMINISTRATOR", "MANAGER"})
     public Employee register(@RequestBody EmployeeDefinition employeeDefinition) {
         User user = userService.createUser(employeeDefinition.userDefinition());
+
+        AssemblyTeam team = null;
+        if(employeeDefinition.teamId() != null) {
+            team = teamRepository
+                    .findById(employeeDefinition.teamId())
+                    .orElseThrow(ResourceNotFoundException::new);
+        }
+
         Employee employee = new Employee(
                 employeeDefinition.person().firstName(),
                 employeeDefinition.person().lastName(),
+                employeeDefinition.employeeNumber(),
+                employeeDefinition.position(),
+                team,
+                null,
                 user
         );
+
         return employeeRepository.save(employee);
     }
 
