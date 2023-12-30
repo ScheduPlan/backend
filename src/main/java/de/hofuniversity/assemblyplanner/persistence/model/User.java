@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serializable;
 import java.util.*;
 
+import static de.hofuniversity.assemblyplanner.service.UserService.sanitizeRoleString;
+
 @Embeddable
 public class User implements Serializable, UserDetails {
     public static final String ROLE_PREFIX = "ROLE_";
@@ -125,6 +127,24 @@ public class User implements Serializable, UserDetails {
 
     public Date getLastPasswordChange() {
         return lastPasswordChange;
+    }
+
+    public boolean isSuperiorTo(User other) {
+        return this.getRole().ordinal() > other.getRole().ordinal();
+    }
+
+    public boolean isInferiorTo(User other) {
+        return this.getRole().ordinal() < other.getRole().ordinal();
+    }
+
+    public boolean hasEqualRoleTo(User other) {
+        return this.getRole() == other.getRole();
+    }
+
+    public boolean hasRole(Role role) {
+        String roleStr = role.toString();
+        return this.getAuthorities().stream()
+                .anyMatch(r -> sanitizeRoleString(r.getAuthority()).equals(roleStr));
     }
 
     @Override

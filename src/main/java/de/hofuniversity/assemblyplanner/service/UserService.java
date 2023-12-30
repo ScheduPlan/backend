@@ -17,13 +17,19 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserService implements UserDetailsService {
 
+    private final EmployeeRepository employeeRepository;
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    private EmployeeRepository employeeRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(EmployeeRepository employeeRepository, PasswordEncoder passwordEncoder) {
+        this.employeeRepository = employeeRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -78,22 +84,16 @@ public class UserService implements UserDetailsService {
         return ((EmployeeUserDetailsAdapter) auth).getEmployee();
     }
 
-    private String sanitizeRoleString(String roleStr) {
+    public static String sanitizeRoleString(String roleStr) {
         if(!roleStr.startsWith(User.ROLE_PREFIX))
             return roleStr;
         return roleStr.substring(User.ROLE_PREFIX.length());
     }
 
-    public boolean hasRole(User user, Role role) {
-        String roleStr = role.toString();
-        return user.getAuthorities().stream()
-                .anyMatch(r -> sanitizeRoleString(r.getAuthority()).equals(roleStr));
-    }
-
     public void promoteUser(User user, Role role) {
         Employee currentUser = getCurrentUser();
 
-        if(currentUser == null || !hasRole(currentUser.getUser(), role))
+        if(currentUser == null || !currentUser.getUser().hasRole(role))
             throw new InsufficientAuthenticationException("users with role " + currentUser.getUser().getRole()
             + " are not authorized to promote other users to role " + role);
 
@@ -116,10 +116,19 @@ public class UserService implements UserDetailsService {
 
     public void changePassword(Employee user, String newPassword) {
         User current = getCurrentUser().getUser();
-        if(!hasRole(current, Role.MANAGER) || user.getUser().getRole().ordinal() >= current.getRole().ordinal())
+        if(!current.hasRole(Role.MANAGER) || !user.getUser().isInferiorTo(current))
             throw new InsufficientAuthenticationException("users with role " + current.getRole() +
                     " are not allowed to change passwords for users with role " + user.getUser().getRole());
 
         savePassword(user, newPassword);
+    }
+
+    public void deleteUser(Employee user) {
+        Employee current = getCurrentUser();
+        if(!current.equals(user) && !current.getUser().isSuperiorTo(user.getUser()) && !current.getUser().hasRole(Role.ADMINISTRATOR)) {
+            throw new InsufficientAuthenticationException("Permission denied");
+        }
+
+        employeeRepository.delete(user);
     }
 }
