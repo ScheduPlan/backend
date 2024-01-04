@@ -3,6 +3,7 @@ package de.hofuniversity.assemblyplanner.persistence.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -21,6 +22,17 @@ public class AssemblyTeam {
     @OneToMany(mappedBy = "team")
     @JsonIgnore
     private List<Order> orders;
+
+    @PreRemove
+    private void preRemove() {
+        for(var emp : employees) {
+            emp.setTeam(null);
+        }
+
+        for(var o : orders) {
+            o.setTeam(null);
+        }
+    }
 
     public AssemblyTeam(Description description, List<Employee> employees, List<Order> orders) {
         this.description = description;
