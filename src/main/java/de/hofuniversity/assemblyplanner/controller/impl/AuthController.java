@@ -123,23 +123,4 @@ public class AuthController {
 
         userService.changePassword(user, pwUpdateRequest.password());
     }
-
-    @DeleteMapping("/delete/{userId}")
-    @Operation(summary = "deletes an employee", description = "deletes an employee by ID. Users may be deleted if the following " +
-            "conditions are met: The user to delete is the current user OR " +
-            "the user to delete has an inferior role to the user making the request OR " +
-            "the user making the request has an administrative role.", responses = {
-            @ApiResponse(responseCode = "404", description = "the user to delete does not exist"),
-            @ApiResponse(responseCode = "403", description = "the user making the request does not have permission" +
-                    " to delete the specified user")
-    })
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable UUID userId) {
-        Employee employee = employeeRepository.findById(userId).orElseThrow(ResourceNotFoundException::new);
-        try {
-            userService.deleteUser(employee);
-        } catch (InsufficientAuthenticationException ex) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
-        }
-    }
 }

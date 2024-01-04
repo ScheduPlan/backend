@@ -14,7 +14,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -109,5 +111,24 @@ public class EmployeeController {
         BeanUtils.copyProperties(putRequest.person(), employee);
         employeeRepository.save(employee);
         return employee;
+    }
+
+    @DeleteMapping("/{userId}")
+    @Operation(summary = "deletes an employee", description = "deletes an employee by ID. Users may be deleted if the following " +
+            "conditions are met: The user to delete is the current user OR " +
+            "the user to delete has an inferior role to the user making the request OR " +
+            "the user making the request has an administrative role.", responses = {
+            @ApiResponse(responseCode = "404", description = "the user to delete does not exist"),
+            @ApiResponse(responseCode = "403", description = "the user making the request does not have permission" +
+                    " to delete the specified user")
+    })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable UUID userId) {
+        Employee employee = employeeRepository.findById(userId).orElseThrow(ResourceNotFoundException::new);
+        try {
+            userService.deleteUser(employee);
+        } catch (InsufficientAuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
+        }
     }
 }
