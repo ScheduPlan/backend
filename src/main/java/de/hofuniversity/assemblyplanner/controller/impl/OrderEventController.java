@@ -102,6 +102,8 @@ public class OrderEventController {
             event.getDescription().setName(patchRequest.name());
         if(patchRequest.description() != null)
             event.getDescription().setDescription(patchRequest.description());
+        if(patchRequest.endDate() != null)
+            event.setEndDate(patchRequest.endDate());
 
         if(!eventRepository.findOverlappingEvents(event).isEmpty())
             throw new ResponseStatusException(HttpStatus.CONFLICT, "event overlaps with another event for the same order");
