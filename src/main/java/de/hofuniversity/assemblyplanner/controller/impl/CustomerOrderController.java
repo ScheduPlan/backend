@@ -90,7 +90,8 @@ public class CustomerOrderController {
                 OrderState.PLANNED,
                 customer,
                 null,
-                team);
+                team,
+                orderRequest.plannedDuration());
 
         order = orderRepository.save(order);
 
@@ -122,6 +123,9 @@ public class CustomerOrderController {
                     .findById(updateRequest.teamId())
                     .orElseThrow(ResourceNotFoundException::new);
             order.setTeam(team);
+        }
+        if(updateRequest.plannedDuration() != null){
+            order.setPlannedDuration(updateRequest.plannedDuration());
         }
 
         return orderRepository.save(order);

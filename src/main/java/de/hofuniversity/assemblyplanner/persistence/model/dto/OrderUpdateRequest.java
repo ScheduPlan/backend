@@ -10,5 +10,6 @@ public record OrderUpdateRequest(
         Integer commissionNumber,
         Double weight,
         OrderState state,
-        UUID teamId
+        UUID teamId,
+        Double plannedDuration
 ) { }

@@ -9,9 +9,10 @@ public record OrderDeleteResponse (
         Integer number,
         String description,
         Integer commissionNumber,
-        Double weight
+        Double weight,
+        Double plannedDuration
 ) {
     public OrderDeleteResponse(Order order) {
-        this(order.getId(), order.getNumber(), order.getDescription(), order.getCommissionNumber(), order.getWeight());
+        this(order.getId(), order.getNumber(), order.getDescription(), order.getCommissionNumber(), order.getWeight(), order.getPlannedDuration());
     }
 }
