@@ -68,7 +68,8 @@ public class OrderEventController {
                 new Description(createRequest.name(), createRequest.description()),
                 null,
                 createRequest.type(),
-                order
+                order,
+                null
         );
 
         if(createRequest.endDate() != null && createRequest.date().after(createRequest.endDate()))

@@ -4,9 +4,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 public class Event {
@@ -22,22 +20,33 @@ public class Event {
     private EventType type;
     @ManyToOne
     private Order order;
+    @ManyToMany
+    private Set<Employee> helpers;
 
-    public Event(Date startDate, Date endDate, Description description, Event parentEvent, EventType type, Order order) {
+    public Event(Date startDate, Date endDate, Description description, Event parentEvent, EventType type, Order order, Set<Employee> helpers) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
         this.parentEvent = parentEvent;
         this.type = type;
         this.order = order;
+        this.helpers = helpers;
     }
 
     public Event(Date start, Description description, Event parentEvent, EventType type, Order order) {
-        this(start, null, description, parentEvent, type, order);
+        this(start, null, description, parentEvent, type, order, null);
     }
 
     public Event() {
 
+    }
+
+    public Set<Employee> getHelpers() {
+        return helpers;
+    }
+
+    public void setHelpers(Set<Employee> helpers) {
+        this.helpers = helpers;
     }
 
     public UUID getId() {

@@ -1,9 +1,11 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Employee extends Person {
@@ -14,19 +16,31 @@ public class Employee extends Person {
     @ManyToOne private AssemblyTeam team;
     @OneToOne(cascade = CascadeType.ALL) private Address address;
     @Embedded private User user;
+    @ManyToMany
+    @JsonIgnore
+    private Set<Event> helpsOn;
 
-    public Employee(String firstName, String lastName, Integer employeeNumber, String position, AssemblyTeam team, Address address, User user) {
+    public Employee(String firstName, String lastName, Integer employeeNumber, String position, AssemblyTeam team, Address address, User user, Set<Event> helpsOn) {
         this(firstName, lastName, user);
         this.employeeNumber = employeeNumber;
         this.position = position;
         this.team = team;
         this.address = address;
+        this.helpsOn = helpsOn;
     }
 
     public Employee(String firstName, String lastName, User user) {
         this.user = user;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public Set<Event> getHelpsOn() {
+        return helpsOn;
+    }
+
+    public void setHelpsOn(Set<Event> helpsOn) {
+        this.helpsOn = helpsOn;
     }
 
     public User getUser() {

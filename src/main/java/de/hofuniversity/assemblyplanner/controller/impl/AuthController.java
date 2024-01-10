@@ -73,7 +73,8 @@ public class AuthController {
                 employeeDefinition.position(),
                 team,
                 null,
-                user
+                user,
+                null
         );
 
         return employeeRepository.save(employee);
