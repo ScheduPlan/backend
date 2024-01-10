@@ -46,6 +46,20 @@ public class CustomerSpecification implements Specification<Customer> {
             ));
         }
 
+        if(this.query.email() != null) {
+            predicates.add(criteriaBuilder.like(
+                    root.get("email"),
+                    "%" + this.query.email() + "%"
+            ));
+        }
+
+        if(this.query.phoneNumber() != null) {
+            predicates.add(criteriaBuilder.like(
+                    root.get("phoneNumber"),
+                    "%" + this.query.phoneNumber() + "%"
+            ));
+        }
+
         if(this.query.address() != null) {
             var addressSpecification = new AddressSpecification(this.query.address());
             var sub = query.subquery(Address.class);

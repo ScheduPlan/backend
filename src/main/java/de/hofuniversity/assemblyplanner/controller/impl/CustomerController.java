@@ -56,7 +56,9 @@ public class CustomerController {
                 customerRequest.customerNumber(),
                 customerRequest.description(),
                 customerRequest.person().firstName(),
-                customerRequest.person().lastName());
+                customerRequest.person().lastName(),
+                customerRequest.email(),
+                customerRequest.phoneNumber());
         return customerRepository.save(customer);
     }
 
@@ -73,6 +75,11 @@ public class CustomerController {
             customer.setCompany(patchRequest.company());
         if(patchRequest.description() != null)
             customer.setDescription(patchRequest.description());
+        if(patchRequest.phoneNumber() != null)
+            customer.setPhoneNumber(patchRequest.phoneNumber());
+        if(patchRequest.email() != null)
+            customer.setEmail(patchRequest.email());
+
         Person.assign(patchRequest.person(), customer, true);
 
         return customerRepository.save(customer);

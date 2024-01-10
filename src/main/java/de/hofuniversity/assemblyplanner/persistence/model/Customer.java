@@ -18,17 +18,37 @@ public class Customer extends Person {
     @JsonIgnore
     private List<Order> orders;
     private String description;
+    private String email;
+    private String phoneNumber;
 
-    public Customer(String company, int customerNumber, String description, String firstName, String lastName) {
+    public Customer(String company, int customerNumber, String description, String firstName, String lastName, String email, String phoneNumber) {
         this.company = company;
         this.customerNumber = customerNumber;
         this.description = description;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
     }
 
     public Customer() {
 
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getCompany() {
