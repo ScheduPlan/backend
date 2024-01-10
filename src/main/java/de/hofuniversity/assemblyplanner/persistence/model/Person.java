@@ -1,7 +1,10 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
 import de.hofuniversity.assemblyplanner.persistence.model.dto.PersonRequest;
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import org.springframework.lang.NonNull;
 
 import java.util.Objects;

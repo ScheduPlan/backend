@@ -1,9 +1,9 @@
 package de.hofuniversity.assemblyplanner.security.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
+import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
 import de.hofuniversity.assemblyplanner.security.model.AuthenticationDetails;
 import de.hofuniversity.assemblyplanner.security.model.TokenDescription;
-import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
 import de.hofuniversity.assemblyplanner.security.model.TokenType;
 import de.hofuniversity.assemblyplanner.service.EmployeeUserDetailsAdapter;
 import de.hofuniversity.assemblyplanner.service.UserService;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

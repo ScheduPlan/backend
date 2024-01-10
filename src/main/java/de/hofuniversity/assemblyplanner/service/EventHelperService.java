@@ -1,16 +1,12 @@
 package de.hofuniversity.assemblyplanner.service;
 
-import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.Event;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.Helper;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 import java.util.stream.Collectors;

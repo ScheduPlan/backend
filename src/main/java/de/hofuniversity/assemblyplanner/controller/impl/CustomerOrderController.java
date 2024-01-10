@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
+import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.Customer;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 
 import java.util.UUID;
 

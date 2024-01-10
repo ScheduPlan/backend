@@ -4,7 +4,10 @@ import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 public class Event {

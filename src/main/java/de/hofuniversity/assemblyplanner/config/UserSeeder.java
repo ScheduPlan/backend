@@ -9,7 +9,6 @@ import de.hofuniversity.assemblyplanner.service.UserService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
 
 @Configuration
 public class UserSeeder {

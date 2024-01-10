@@ -1,9 +1,7 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
-import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 
 import java.util.List;

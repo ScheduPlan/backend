@@ -11,23 +11,12 @@ import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
 import de.hofuniversity.assemblyplanner.security.model.AuthenticationDetails;
 import de.hofuniversity.assemblyplanner.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -56,7 +45,7 @@ public class AuthController {
             "MANAGERS may only create users with role MANAGER or below.")
     @ResponseStatus(HttpStatus.CREATED)
     @RolesAllowed({"ADMINISTRATOR", "MANAGER"})
-    public Employee register(@RequestBody EmployeeDefinition employeeDefinition) {
+    public Employee register(@RequestBody @Valid EmployeeDefinition employeeDefinition) {
         User user = userService.createUser(employeeDefinition.userDefinition());
 
         AssemblyTeam team = null;

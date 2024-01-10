@@ -1,7 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model.dto;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Role;
-import de.hofuniversity.assemblyplanner.persistence.model.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
