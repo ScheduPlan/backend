@@ -1,5 +1,7 @@
 package de.hofuniversity.assemblyplanner.persistence.model.dto;
 
+import jakarta.validation.Valid;
+
 import java.util.UUID;
 
 public record EmployeeUpdateRequest (
@@ -7,6 +9,6 @@ public record EmployeeUpdateRequest (
         String position,
         UUID teamId,
         UUID addressId,
-        PersonRequest person,
-        UserUpdateRequest user
+        @Valid PersonRequest person,
+        @Valid UserUpdateRequest user
 ) { }

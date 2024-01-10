@@ -12,6 +12,7 @@ import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -61,7 +62,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "the employee was not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public Employee patchEmployee(@PathVariable UUID employeeId, @RequestBody EmployeeUpdateRequest patchRequest) {
+    public Employee patchEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeUpdateRequest patchRequest) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(ResourceNotFoundException::new);
 
         if(patchRequest.employeeNumber() != null)
@@ -104,7 +105,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "the employee was not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public Employee putEmployee(@PathVariable UUID employeeId, @RequestBody EmployeeUpdateRequest putRequest) {
+    public Employee putEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeUpdateRequest putRequest) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(ResourceNotFoundException::new);
         BeanUtils.copyProperties(putRequest, employee, "user", "person");
         BeanUtils.copyProperties(putRequest.user(), employee.getUser());
