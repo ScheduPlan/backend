@@ -62,12 +62,12 @@ public class CustomerController {
         return customerRepository.save(customer);
     }
 
-    @PatchMapping("/{teamId}")
+    @PatchMapping("/{customerId}")
     @Operation(summary = "updates a customer. NULL values are ignored", responses = {
             @ApiResponse(responseCode = "404", description = "the customer was not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public Customer patchCustomer(@PathVariable UUID customerId, @RequestBody CustomerRequest patchRequest) {
+    public Customer patchCustomer(@PathVariable UUID customerId, @RequestBody @Valid CustomerRequest patchRequest) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
         if(patchRequest.customerNumber() > 0)
             customer.setCustomerNumber(patchRequest.customerNumber());
