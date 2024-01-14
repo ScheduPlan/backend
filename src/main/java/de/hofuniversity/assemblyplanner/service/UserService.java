@@ -7,6 +7,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.UserDefinition;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
 import de.hofuniversity.assemblyplanner.security.model.TokenDescription;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,6 +45,14 @@ public class UserService implements UserDetailsService {
         }
 
         return employee;
+    }
+
+    public User updateName(User user, String username) {
+        if(!getCurrentUser().getUser().hasRole(Role.MANAGER))
+            throw new AccessDeniedException("only MANAGERS and ADMINISTRATORS may change user names");
+
+        user.setUsername(username);
+        return user;
     }
 
     public Employee loadEmployeeByUsername(String username) {

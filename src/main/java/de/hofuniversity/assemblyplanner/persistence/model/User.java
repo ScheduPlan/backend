@@ -20,7 +20,7 @@ public class User implements Serializable, UserDetails {
     public static final String ROLE_PREFIX = "ROLE_";
 
     @Column(unique = true)
-    private String userName;
+    private String username;
     private String password;
     @Column(unique = true)
     private String email;
@@ -30,16 +30,16 @@ public class User implements Serializable, UserDetails {
     private boolean enabled = true;
     private Date lastPasswordChange = new Date();
 
-    public User(String userName, String email, String password, Role role, Date expiryDate) {
-        this.userName = userName;
+    public User(String username, String email, String password, Role role, Date expiryDate) {
+        this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
         this.expiryDate = expiryDate;
     }
 
-    public User(String userName, String email, String password, Role role) {
-        this(userName, email, password, role, null);
+    public User(String username, String email, String password, Role role) {
+        this(username, email, password, role, null);
     }
 
     public User() {
@@ -91,7 +91,11 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public String getUsername() {
-        return userName;
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override @JsonIgnore
@@ -155,11 +159,11 @@ public class User implements Serializable, UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return locked == user.locked && Objects.equals(userName, user.userName) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && role == user.role && Objects.equals(expiryDate, user.expiryDate);
+        return locked == user.locked && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && role == user.role && Objects.equals(expiryDate, user.expiryDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userName, password, email, role, expiryDate, locked);
+        return Objects.hash(username, password, email, role, expiryDate, locked);
     }
 }

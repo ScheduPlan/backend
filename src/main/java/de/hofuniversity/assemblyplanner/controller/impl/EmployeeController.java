@@ -90,6 +90,9 @@ public class EmployeeController {
             if(patchRequest.user().email() != null) {
                 employee.getUser().setEmail(patchRequest.user().email());
             }
+            if(patchRequest.user().username() != null) {
+                userService.updateName(employee.getUser(), patchRequest.user().username());
+            }
         }
 
         if(patchRequest.person() != null) {
