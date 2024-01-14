@@ -18,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
@@ -43,7 +45,7 @@ public class UserPersistenceTest {
         var def = new UserDefinition("test@test.de", "test", "test", Role.FITTER);
 
         User user = userService.createUser(def);
-        Employee employee = new Employee("admin", "admin", 1, null, null, null, user);
+        Employee employee = new Employee("admin", "admin", 1, null, null, null, user, Set.of());
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
@@ -61,12 +63,12 @@ public class UserPersistenceTest {
         var currentUser = new UserDefinition("manager@test.de", "manager", "manager", Role.MANAGER);
 
         User user = userService.createUser(currentUser, true);
-        Employee employee = new Employee("manager", "manager", 1, null, null, null, user);
+        Employee employee = new Employee("manager", "manager", 1, null, null, null, user, Set.of());
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
         user = userService.createUser(userToDelete);
-        employee = new Employee("user", "user", 2, null, null, null, user);
+        employee = new Employee("user", "user", 2, null, null, null, user, Set.of());
         Employee savedEmployee = employeeRepository.save(employee);
 
         assertThatCode(() -> userService.deleteUser(savedEmployee)).doesNotThrowAnyException();
@@ -82,12 +84,12 @@ public class UserPersistenceTest {
         var currentUser = new UserDefinition("admin1@test.de", "admin1", "admin", Role.ADMINISTRATOR);
 
         User user = userService.createUser(currentUser, true);
-        Employee employee = new Employee("admin", "admin", 1, null, null, null, user);
+        Employee employee = new Employee("admin", "admin", 1, null, null, null, user, Set.of());
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
         user = userService.createUser(userToDelete);
-        employee = new Employee("admin", "admin", 2, null, null, null, user);
+        employee = new Employee("admin", "admin", 2, null, null, null, user, Set.of());
         Employee savedEmployee = employeeRepository.save(employee);
 
         assertThatCode(() -> userService.deleteUser(savedEmployee)).doesNotThrowAnyException();
@@ -103,12 +105,12 @@ public class UserPersistenceTest {
         var currentUser = new UserDefinition("user1@test.de", "user1", "user", Role.MANAGER);
 
         User user = userService.createUser(currentUser, true);
-        Employee employee = new Employee("user", "user", 1, null, null, null, user);
+        Employee employee = new Employee("user", "user", 1, null, null, null, user, Set.of());
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
         user = userService.createUser(userToDelete);
-        employee = new Employee("user", "user", 2, null, null, null, user);
+        employee = new Employee("user", "user", 2, null, null, null, user, Set.of());
         Employee savedEmployee = employeeRepository.save(employee);
 
         assertThatThrownBy(() -> userService.deleteUser(savedEmployee))
@@ -127,12 +129,12 @@ public class UserPersistenceTest {
         var currentUser = new UserDefinition("user1@test.de", "user1", "user", Role.FITTER);
 
         User user = userService.createUser(currentUser, true);
-        Employee employee = new Employee("user", "user", 1, null, null, null, user);
+        Employee employee = new Employee("user", "user", 1, null, null, null, user, Set.of());
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
         user = userService.createUser(userToDelete, true);
-        employee = new Employee("user", "user", 2, null, null, null, user);
+        employee = new Employee("user", "user", 2, null, null, null, user, Set.of());
         Employee savedEmployee = employeeRepository.save(employee);
 
         assertThatThrownBy(() -> userService.deleteUser(savedEmployee))

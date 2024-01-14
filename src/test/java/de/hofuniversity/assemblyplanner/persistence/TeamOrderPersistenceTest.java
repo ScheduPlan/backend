@@ -36,6 +36,7 @@ public class TeamOrderPersistenceTest {
                         OrderState.PLANNED,
                         null,
                         null,
+                        null,
                         null));
 
         AssemblyTeam t = teamRepository.save(

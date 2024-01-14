@@ -37,7 +37,9 @@ public class AddressPersistenceTest {
                 123,
                 "description",
                 "firstname",
-                "lastname"
+                "lastname",
+                "test@test.de",
+                "1234"
         );
 
         customer = customerRepository.save(customer);

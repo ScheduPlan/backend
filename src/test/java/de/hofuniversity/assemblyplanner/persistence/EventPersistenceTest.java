@@ -39,7 +39,8 @@ public class EventPersistenceTest {
                 new Description("test", "test"),
                 null,
                 EventType.ASSEMBLY,
-                null
+                null,
+                Set.of()
         );
     }
 
@@ -179,8 +180,8 @@ public class EventPersistenceTest {
 
     @Test
     public void shouldNotFindOverlapsOnDifferentParentOrder() {
-        Order firstOrder = new Order(123, "", 123, 1.0, OrderState.PLANNED, null, Set.of(), null);
-        Order secondOrder = new Order(123, "", 123, 1.0, OrderState.PLANNED, null, Set.of(), null);
+        Order firstOrder = new Order(123, "", 123, 1.0, OrderState.PLANNED, null, Set.of(), null, null);
+        Order secondOrder = new Order(123, "", 123, 1.0, OrderState.PLANNED, null, Set.of(), null, null);
         orderRepository.save(firstOrder);
         orderRepository.save(secondOrder);
 
@@ -205,7 +206,7 @@ public class EventPersistenceTest {
 
     @Test
     public void shouldFindOverlapsOnOverlappingEventNullOrder() {
-        Order firstOrder = new Order(123, "", 123, 1.0, OrderState.PLANNED, null, Set.of(), null);
+        Order firstOrder = new Order(123, "", 123, 1.0, OrderState.PLANNED, null, Set.of(), null, null);
         orderRepository.save(firstOrder);
 
         Event event = createTestEvent(
@@ -229,7 +230,7 @@ public class EventPersistenceTest {
 
     @Test
     public void shouldFindOverlapsOnParentEventNullOrder() {
-        Order firstOrder = new Order(123, "", 123, 1.0, OrderState.PLANNED, null, Set.of(), null);
+        Order firstOrder = new Order(123, "", 123, 1.0, OrderState.PLANNED, null, Set.of(), null, null);
         orderRepository.save(firstOrder);
 
         Event event = createTestEvent(

@@ -32,7 +32,9 @@ public class CustomerPersistenceTest {
                 123,
                 "description",
                 "firstname",
-                "lastname"
+                "lastname",
+                "test@test.de",
+                "1234"
         );
 
         customer = customerRepository.save(customer);
@@ -63,45 +65,57 @@ public class CustomerPersistenceTest {
 
     @Test
     public void shouldSearchCustomersByFirstName() {
-        CustomerQuery query = new CustomerQuery("first", null, null, null, null);
+        CustomerQuery query = new CustomerQuery("first", null, null, null, null, null, null);
         assertThat(customerRepository.findAll(new CustomerSpecification(query))).hasSize(1);
     }
 
     @Test
     public void shouldSearchCustomersByLastName() {
-        CustomerQuery query = new CustomerQuery(null, "last", null, null, null);
+        CustomerQuery query = new CustomerQuery(null, "last", null, null, null, null, null);
         assertThat(customerRepository.findAll(new CustomerSpecification(query))).hasSize(1);
     }
 
     @Test
     public void shouldSearchCustomersByCompany() {
-        CustomerQuery query = new CustomerQuery(null, null, "comp", null, null);
+        CustomerQuery query = new CustomerQuery(null, null, "comp", null, null, null, null);
         assertThat(customerRepository.findAll(new CustomerSpecification(query))).hasSize(1);
     }
 
     @Test
     public void shouldSearchCustomersByCustomerNumber() {
-        CustomerQuery query = new CustomerQuery(null, null, null, 12, null);
+        CustomerQuery query = new CustomerQuery(null, null, null, 12, null, null, null);
         assertThat(customerRepository.findAll(new CustomerSpecification(query))).hasSize(1);
     }
 
     @Test
     public void shouldSearchCustomersByAddress() {
         AddressQuery addressQuery = new AddressQuery("city", null, null, null, null);
-        CustomerQuery query = new CustomerQuery(null, null, null, null, addressQuery);
+        CustomerQuery query = new CustomerQuery(null, null, null, null, addressQuery, null, null);
         assertThat(customerRepository.findAll(new CustomerSpecification(query))).hasSize(1);
     }
 
     @Test
     public void shouldSearchByMultipleFieldsByAnd() {
         AddressQuery addressQuery = new AddressQuery("city", "12345", null, null, null);
-        CustomerQuery query = new CustomerQuery("first", "last", "comp", 12, addressQuery);
+        CustomerQuery query = new CustomerQuery("first", "last", "comp", 12, addressQuery, null, null);
         assertThat(customerRepository.findAll(new CustomerSpecification(query))).hasSize(1);
     }
 
     @Test
     public void shouldNotFindOnNonMatchingQuery() {
-        CustomerQuery query = new CustomerQuery("last", null, null, null, null);
+        CustomerQuery query = new CustomerQuery("last", null, null, null, null, null, null);
         assertThat(customerRepository.findAll(new CustomerSpecification(query))).hasSize(0);
+    }
+
+    @Test
+    public void shouldSearchCustomersByPhoneNumber() {
+        CustomerQuery query = new CustomerQuery(null, null, null, null, null, "1234", null);
+        assertThat(customerRepository.findAll(new CustomerSpecification(query))).hasSize(1);
+    }
+
+    @Test
+    public void shouldSearchCustomersByEmail() {
+        CustomerQuery query = new CustomerQuery(null, null, null, null, null, null, "test@test.de");
+        assertThat(customerRepository.findAll(new CustomerSpecification(query))).hasSize(1);
     }
 }
