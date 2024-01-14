@@ -1,10 +1,7 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
-import de.hofuniversity.assemblyplanner.persistence.model.Address;
-import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
-import de.hofuniversity.assemblyplanner.persistence.model.Employee;
-import de.hofuniversity.assemblyplanner.persistence.model.Person;
+import de.hofuniversity.assemblyplanner.persistence.model.*;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequest;
 import de.hofuniversity.assemblyplanner.persistence.repository.AddressRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
@@ -75,6 +72,9 @@ public class EmployeeController {
         }
 
         if(patchRequest.teamId() != null){
+            if(userService.getCurrentUser().getUser().hasRole(Role.MANAGER))
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
+
             AssemblyTeam team = teamRepository.findById(patchRequest.teamId())
                     .orElseThrow(() -> new ResourceNotFoundException("team not found"));
             employee.setTeam(team);
@@ -107,6 +107,9 @@ public class EmployeeController {
     @ResponseStatus(HttpStatus.OK)
     public Employee putEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeUpdateRequest putRequest) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(ResourceNotFoundException::new);
+        if(putRequest.teamId() != null && userService.getCurrentUser().getUser().hasRole(Role.MANAGER))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
+
         BeanUtils.copyProperties(putRequest, employee, "user", "person");
         BeanUtils.copyProperties(putRequest.user(), employee.getUser());
         BeanUtils.copyProperties(putRequest.person(), employee);

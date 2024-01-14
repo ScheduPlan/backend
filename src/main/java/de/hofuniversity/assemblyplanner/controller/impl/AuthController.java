@@ -3,6 +3,7 @@ package de.hofuniversity.assemblyplanner.controller.impl;
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
+import de.hofuniversity.assemblyplanner.persistence.model.Role;
 import de.hofuniversity.assemblyplanner.persistence.model.User;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.*;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
@@ -17,6 +18,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/auth")
@@ -50,6 +52,9 @@ public class AuthController {
 
         AssemblyTeam team = null;
         if(employeeDefinition.teamId() != null) {
+            if(user.hasRole(Role.MANAGER))
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
+
             team = teamRepository
                     .findById(employeeDefinition.teamId())
                     .orElseThrow(ResourceNotFoundException::new);
