@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Repository
 public interface EmployeeRepository extends CrudRepository<Employee, UUID> {
-    @Query("SELECT e FROM Employee e WHERE e.user.userName = :username")
+    @Query("SELECT e FROM Employee e WHERE e.user.username = :username")
     Optional<Employee> findByUserName(String username);
 
     @Query("SELECT e FROM Employee e JOIN e.helpsOn h WHERE h.id = :eventId AND h.order.id = :orderId AND h.order.customer.id = :customerId")
