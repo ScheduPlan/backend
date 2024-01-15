@@ -13,7 +13,9 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/auth")
@@ -59,7 +61,13 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     @SecurityRequirements
     public LoginResponse login(@RequestBody @Valid LoginInfo loginInfo) {
-        AuthenticationDetails details = authenticationService.login(loginInfo.username(), loginInfo.password());
+
+        AuthenticationDetails details;
+        try {
+            details = authenticationService.login(loginInfo.username(), loginInfo.password());
+        } catch (AccessDeniedException ae) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
 
         return new LoginResponse(details.token(), details.refreshToken(), details.employee().getId());
     }
@@ -68,7 +76,12 @@ public class AuthController {
     @Operation(summary = "refresh the current access token using a refresh token")
     @ResponseStatus(HttpStatus.OK)
     public RefreshResponse refresh(@RequestBody @Valid RefreshRequest refreshRequest) {
-        AuthenticationDetails details = authenticationService.newAccessToken(refreshRequest.refreshToken());
+        AuthenticationDetails details;
+        try {
+            details = authenticationService.newAccessToken(refreshRequest.refreshToken());
+        } catch (AccessDeniedException ae) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         return new RefreshResponse(details.token(), details.employee().getId());
     }
 
@@ -87,6 +100,10 @@ public class AuthController {
 
         Employee user = employeeService.getEmployee(pwUpdateRequest.userId());
 
-        userService.changePassword(user, pwUpdateRequest.password());
+        try {
+            userService.changePassword(user, pwUpdateRequest.password());
+        } catch (AccessDeniedException ae) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
     }
 }

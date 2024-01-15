@@ -9,6 +9,8 @@ import de.hofuniversity.assemblyplanner.service.EmployeeUserDetailsAdapter;
 import de.hofuniversity.assemblyplanner.service.UserService;
 import de.hofuniversity.assemblyplanner.util.DateUtil;
 import de.hofuniversity.assemblyplanner.util.KeyUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ public class JwtAuthenticationService implements AuthenticationService {
 
     public JwtAuthenticationService(@Value("${auth.validity.minutes:60}") int validityInMinutes,
                                     @Value("${auth.validity.sign-key:#{null}}") String signKey,
-                                    @Value("${auth.refresh.validity.hours:1}") int refreshValidityInHours,
+                                    @Value("${auth.refresh.validity.hours:24}") int refreshValidityInHours,
                                     @Autowired UserService userService,
                                     @Autowired AuthenticationManager authenticationManager) {
 
@@ -138,8 +140,14 @@ public class JwtAuthenticationService implements AuthenticationService {
 
     @Override
     public TokenDescription parseToken(String token) {
-        var data = parser.parseSignedClaims(token).getPayload();
-        return new TokenDescription(data);
+        Claims claims;
+        try {
+            claims = parser.parseSignedClaims(token).getPayload();
+        } catch (JwtException jwtException) {
+            throw new AccessDeniedException("JWT invalid");
+        }
+
+        return new TokenDescription(claims);
     }
 
     @Override
