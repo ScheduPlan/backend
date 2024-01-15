@@ -5,9 +5,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.Event;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.Helper;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ResourceRequest;
-import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
-import de.hofuniversity.assemblyplanner.persistence.repository.EventRepository;
-import de.hofuniversity.assemblyplanner.service.EventHelperService;
+import de.hofuniversity.assemblyplanner.service.api.EventHelperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +21,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/customers/{customerId}/orders/{orderId}/events/{eventId}/helpers")
 public class EventHelperController {
 
-    private final EmployeeRepository employeeRepository;
-    private final EventRepository eventRepository;
+
     private final EventHelperService eventHelperService;
 
     @Autowired
-    public EventHelperController(EmployeeRepository employeeRepository, EventRepository eventRepository, EventHelperService eventHelperService) {
-        this.employeeRepository = employeeRepository;
-        this.eventRepository = eventRepository;
+    public EventHelperController(EventHelperService eventHelperService) {
         this.eventHelperService = eventHelperService;
     }
 
@@ -45,11 +40,7 @@ public class EventHelperController {
             @PathVariable UUID eventId,
             @PathVariable UUID helperId) {
 
-        Employee employee = employeeRepository
-                .findEventHelper(eventId, orderId, customerId, helperId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        return new Helper(employee);
+        return eventHelperService.getHelper(customerId, orderId, eventId, helperId);
     }
 
     @GetMapping
@@ -62,12 +53,7 @@ public class EventHelperController {
             @PathVariable UUID orderId,
             @PathVariable UUID eventId) {
 
-        return eventRepository
-                .findEventByOrderId(customerId, orderId, eventId)
-                .orElseThrow(ResourceNotFoundException::new)
-                .getHelpers()
-                .stream()
-                .map(Helper::new).collect(Collectors.toSet());
+        return eventHelperService.getHelpers(customerId, orderId, eventId);
     }
 
     @PostMapping
@@ -81,23 +67,8 @@ public class EventHelperController {
             @PathVariable UUID orderId,
             @PathVariable UUID eventId,
             @RequestBody ResourceRequest request) {
-        Event event = eventRepository
-                .findEventByOrderId(customerId, orderId, eventId)
-                .orElseThrow(ResourceNotFoundException::new);
 
-        Employee helper = employeeRepository
-                .findById(request.resourceId())
-                .orElseThrow(ResourceNotFoundException::new);
-
-        try {
-            eventHelperService.addHelper(event, helper);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e);
-        }
-
-        eventRepository.save(event);
-        return event.getHelpers()
-                .stream().map(Helper::new).collect(Collectors.toSet());
+        return eventHelperService.addHelper(customerId, orderId, eventId, request);
     }
 
     @DeleteMapping("/{helperId}")
@@ -111,23 +82,7 @@ public class EventHelperController {
             @PathVariable UUID eventId,
             @PathVariable UUID helperId) {
 
-        Event event = eventRepository
-                .findEventByOrderId(customerId, orderId, eventId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        Employee helper = employeeRepository
-                .findById(helperId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        try {
-            eventHelperService.removeHelper(event, helper);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-        }
-
-        eventRepository.save(event);
-        return event.getHelpers()
-                .stream().map(Helper::new).collect(Collectors.toSet());
+        return eventHelperService.removeHelper(customerId, orderId, eventId, helperId);
     }
 
 }

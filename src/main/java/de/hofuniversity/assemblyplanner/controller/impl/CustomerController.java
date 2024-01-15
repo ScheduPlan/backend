@@ -7,6 +7,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.CustomerQuery;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.CustomerRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.specification.CustomerSpecification;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
+import de.hofuniversity.assemblyplanner.service.api.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -23,17 +24,17 @@ import java.util.UUID;
 @RequestMapping("/customers")
 public class CustomerController {
 
-    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
-    public CustomerController(@Autowired CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public CustomerController(@Autowired CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     @GetMapping
     @Operation(summary = "gets all customers")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Customer> getCustomers(@ParameterObject @ModelAttribute CustomerQuery query) {
-        return customerRepository.findAll(new CustomerSpecification(query));
+        return customerService.getCustomers(query);
     }
 
     @GetMapping(value = "/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,24 +43,14 @@ public class CustomerController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Customer getCustomer(@PathVariable UUID customerId) {
-        return customerRepository
-                .findById(customerId)
-                .orElseThrow(ResourceNotFoundException::new);
+        return customerService.getCustomer(customerId);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "creates a customer")
     @ResponseStatus(HttpStatus.CREATED)
     public Customer createCustomer(@RequestBody @Valid CustomerRequest customerRequest) {
-        Customer customer = new Customer(
-                customerRequest.company(),
-                customerRequest.customerNumber(),
-                customerRequest.description(),
-                customerRequest.person().firstName(),
-                customerRequest.person().lastName(),
-                customerRequest.email(),
-                customerRequest.phoneNumber());
-        return customerRepository.save(customer);
+        return customerService.createCustomer(customerRequest);
     }
 
     @PatchMapping("/{customerId}")
@@ -68,21 +59,7 @@ public class CustomerController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Customer patchCustomer(@PathVariable UUID customerId, @RequestBody @Valid CustomerRequest patchRequest) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
-        if(patchRequest.customerNumber() > 0)
-            customer.setCustomerNumber(patchRequest.customerNumber());
-        if(patchRequest.company() != null)
-            customer.setCompany(patchRequest.company());
-        if(patchRequest.description() != null)
-            customer.setDescription(patchRequest.description());
-        if(patchRequest.phoneNumber() != null)
-            customer.setPhoneNumber(patchRequest.phoneNumber());
-        if(patchRequest.email() != null)
-            customer.setEmail(patchRequest.email());
-
-        Person.assign(patchRequest.person(), customer, true);
-
-        return customerRepository.save(customer);
+        return customerService.patchCustomer(customerId, patchRequest);
     }
 
     @PutMapping("/{customerId}")
@@ -91,10 +68,7 @@ public class CustomerController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Customer putCustomer(@PathVariable UUID customerId, @RequestBody CustomerRequest putRequest) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
-        BeanUtils.copyProperties(putRequest, customer);
-        Person.assign(putRequest.person(), customer, false);
-        return customerRepository.save(customer);
+        return customerService.putCustomer(customerId, putRequest);
     }
 
     @DeleteMapping("/{customerId}")
@@ -103,8 +77,6 @@ public class CustomerController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Customer deleteCustomer(@PathVariable UUID customerId) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
-        customerRepository.delete(customer);
-        return customer;
+        return customerService.deleteCustomer(customerId);
     }
 }

@@ -3,6 +3,7 @@ package de.hofuniversity.assemblyplanner.controller.impl;
 import de.hofuniversity.assemblyplanner.persistence.model.Event;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EventDateQuery;
 import de.hofuniversity.assemblyplanner.persistence.repository.EventRepository;
+import de.hofuniversity.assemblyplanner.service.api.OrderEventService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/events")
 public class EventController {
 
-    private final EventRepository eventRepository;
+    private final OrderEventService eventService;
 
-    public EventController(@Autowired EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
+    @Autowired
+    public EventController(OrderEventService eventService) {
+        this.eventService = eventService;
     }
 
     @GetMapping
@@ -28,11 +30,7 @@ public class EventController {
             "by 'Z' in order to indicate UTC time.")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Event> getEvents(@ParameterObject @ModelAttribute EventDateQuery dateQuery) {
-        if(!dateQuery.isSpecified())
-            return eventRepository.findAll();
-
-        Specification<Event> dateSpecification = dateQuery.getEventSpecification();
-        return eventRepository.findAll(dateSpecification);
+        return eventService.getEvents(dateQuery);
     }
 }
 

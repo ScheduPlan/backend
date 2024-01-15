@@ -5,6 +5,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.Part;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourceRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.PartRepository;
+import de.hofuniversity.assemblyplanner.service.api.PartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -19,17 +20,18 @@ import java.util.UUID;
 @RequestMapping("/parts")
 public class PartController {
 
-    private final PartRepository partRepository;
+    private final PartService partService;
 
-    public PartController(@Autowired PartRepository partRepository) {
-        this.partRepository = partRepository;
+    @Autowired
+    public PartController(PartService partService) {
+        this.partService = partService;
     }
 
     @GetMapping
     @Operation(summary = "gets all existing parts")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Part> getParts(@PathVariable UUID productId) {
-        return partRepository.findAll();
+        return partService.getParts(productId);
     }
 
     @GetMapping("/{partId}")
@@ -38,22 +40,14 @@ public class PartController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Part getPart(@PathVariable UUID partId) {
-        return partRepository.findById(partId)
-                .orElseThrow(ResourceNotFoundException::new);
+        return partService.getPart(partId);
     }
 
     @PostMapping
     @Operation(summary = "creates a part")
     @ResponseStatus(HttpStatus.CREATED)
     public Part createPart(@RequestBody @Valid DescribableResourceRequest partCreateRequest) {
-        Part part = new Part(
-                new Description(partCreateRequest.name(),
-                        partCreateRequest.description()
-                ),
-                null
-        );
-
-        return partRepository.save(part);
+        return partService.createPart(partCreateRequest);
     }
 
     @PatchMapping("/{partId}")
@@ -62,15 +56,7 @@ public class PartController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Part patchPart(@PathVariable UUID partId, @RequestBody DescribableResourceRequest partCreateRequest) {
-        Part part = partRepository.findById(partId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        if(partCreateRequest.name() != null)
-            part.getDescription().setName(partCreateRequest.name());
-        if(partCreateRequest.description() != null)
-            part.getDescription().setDescription(partCreateRequest.description());
-
-        return partRepository.save(part);
+        return partService.patchPart(partId, partCreateRequest);
     }
 
     @PutMapping("/{partId}")
@@ -79,12 +65,7 @@ public class PartController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Part putPart(@PathVariable UUID partId, @RequestBody DescribableResourceRequest partCreateRequest) {
-        Part part = partRepository.findById(partId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        BeanUtils.copyProperties(partCreateRequest, part);
-
-        return partRepository.save(part);
+        return partService.putPart(partId, partCreateRequest);
     }
 
     @DeleteMapping("/{partId}")
@@ -93,10 +74,6 @@ public class PartController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Part deletePart(@PathVariable UUID partId) {
-        Part part = partRepository.findById(partId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        partRepository.delete(part);
-        return part;
+        return partService.deletePart(partId);
     }
 }

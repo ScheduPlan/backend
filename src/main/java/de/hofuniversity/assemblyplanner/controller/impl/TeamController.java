@@ -10,6 +10,9 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.TeamDeleteResponse;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
+import de.hofuniversity.assemblyplanner.service.api.CustomerOrderService;
+import de.hofuniversity.assemblyplanner.service.api.OrderService;
+import de.hofuniversity.assemblyplanner.service.api.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
@@ -26,34 +30,32 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/teams")
 public class TeamController {
 
-    private final TeamRepository teamRepository;
+    private final TeamService teamService;
 
-    public TeamController(@Autowired TeamRepository teamRepository) {
-        this.teamRepository = teamRepository;
+    @Autowired
+    public TeamController(TeamService teamService){
+        this.teamService = teamService;
     }
 
     @GetMapping
     @Operation(summary = "gets all teams")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<AssemblyTeam> getTeams() {
-        return teamRepository.findAll();
+        return teamService.getTeams();
     }
 
     @GetMapping("/{teamId}")
     @Operation(summary = "gets a team")
     @ResponseStatus(HttpStatus.OK)
     public AssemblyTeam getTeam(@PathVariable UUID teamId) {
-        return teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
+        return teamService.getTeam(teamId);
     }
 
     @PostMapping
     @Operation(summary = "creates a team")
     @ResponseStatus(HttpStatus.CREATED)
     public AssemblyTeam createTeam(@RequestBody @Valid DescribableResourceRequest teamCreateRequest) {
-        AssemblyTeam team = new AssemblyTeam(
-                new Description(teamCreateRequest.name(), teamCreateRequest.description()), null, null);
-
-        return teamRepository.save(team);
+        return teamService.createTeam(teamCreateRequest);
     }
 
     @PatchMapping("/{teamId}")
@@ -62,13 +64,7 @@ public class TeamController {
     })
     @ResponseStatus(HttpStatus.OK)
     public AssemblyTeam patchTeam(@PathVariable UUID teamId, @RequestBody DescribableResourceRequest patchTeamRequest) {
-        AssemblyTeam team = teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
-        if(patchTeamRequest.name() != null)
-            team.getDescription().setName(patchTeamRequest.name());
-        if(patchTeamRequest.description() != null)
-            team.getDescription().setDescription(patchTeamRequest.description());
-
-        return teamRepository.save(team);
+        return teamService.patchTeam(teamId, patchTeamRequest);
     }
 
     @PutMapping("/{teamId}")
@@ -77,9 +73,7 @@ public class TeamController {
     })
     @ResponseStatus(HttpStatus.OK)
     public AssemblyTeam putTeam(@PathVariable UUID teamId, @RequestBody DescribableResourceRequest putTeamRequest) {
-        AssemblyTeam team = teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
-        BeanUtils.copyProperties(putTeamRequest, team);
-        return teamRepository.save(team);
+        return teamService.putTeam(teamId, putTeamRequest);
     }
 
     @DeleteMapping("/{teamId}")
@@ -88,10 +82,7 @@ public class TeamController {
     })
     @ResponseStatus(HttpStatus.OK)
     public TeamDeleteResponse deleteTeam(@PathVariable UUID teamId) {
-        AssemblyTeam team = teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
-        TeamDeleteResponse response = new TeamDeleteResponse(team);
-        teamRepository.delete(team);
-        return response;
+        return teamService.deleteTeam(teamId);
     }
 
     @GetMapping("/{teamId}/orders")
@@ -100,10 +91,14 @@ public class TeamController {
     })
     @ResponseStatus(HttpStatus.OK)
     public List<OrderListItem> getOrders(@PathVariable UUID teamId) {
-        AssemblyTeam team = teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
-        Iterable<Order> orders = team.getOrders();
-        return StreamSupport.stream(orders.spliterator(), false)
-                .map(OrderListItem::new).toList();
+        AssemblyTeam team = teamService.getTeam(teamId);
+        List<OrderListItem> orderListItems = new ArrayList<>();
+
+        for(var order : team.getOrders()) {
+            orderListItems.add(new OrderListItem(order));
+        }
+
+        return orderListItems;
     }
 
     @GetMapping("/{teamId}/members")
@@ -112,9 +107,9 @@ public class TeamController {
     })
     @ResponseStatus(HttpStatus.OK)
     public List<EmployeeListItem> getMembers(@PathVariable UUID teamId) {
-        AssemblyTeam team = teamRepository.findById(teamId).orElseThrow(ResourceNotFoundException::new);
+        AssemblyTeam team = teamService.getTeam(teamId);
         List<Employee> employees = team.getEmployees();
+
         return employees.stream().map(EmployeeListItem::new).toList();
     }
-
 }

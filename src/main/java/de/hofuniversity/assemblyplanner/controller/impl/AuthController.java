@@ -1,16 +1,12 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
-import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
-import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
-import de.hofuniversity.assemblyplanner.persistence.model.Role;
-import de.hofuniversity.assemblyplanner.persistence.model.User;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.*;
-import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
-import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.security.api.AuthenticationService;
 import de.hofuniversity.assemblyplanner.security.model.AuthenticationDetails;
 import de.hofuniversity.assemblyplanner.service.UserService;
+import de.hofuniversity.assemblyplanner.service.api.EmployeeService;
+import de.hofuniversity.assemblyplanner.service.api.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.annotation.security.RolesAllowed;
@@ -18,26 +14,26 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-
-    private final EmployeeRepository employeeRepository;
-    private final TeamRepository teamRepository;
     private final UserService userService;
     private final AuthenticationService authenticationService;
+    private final EmployeeService employeeService;
+    private final TeamService teamService;
 
+    @Autowired
     public AuthController(
-            @Autowired EmployeeRepository employeeRepository,
-            @Autowired UserService userService,
-            @Autowired AuthenticationService authenticationService,
-            @Autowired TeamRepository teamRepository) {
-        this.employeeRepository = employeeRepository;
-        this.userService = userService;
+            UserService userService,
+            AuthenticationService authenticationService,
+            EmployeeService employeeService,
+            TeamService teamService
+    ) {
         this.authenticationService = authenticationService;
-        this.teamRepository = teamRepository;
+        this.userService = userService;
+        this.employeeService = employeeService;
+        this.teamService = teamService;
     }
 
     @PostMapping("/create")
@@ -48,30 +44,7 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     @RolesAllowed({"ADMINISTRATOR", "MANAGER"})
     public Employee register(@RequestBody @Valid EmployeeDefinition employeeDefinition) {
-        User user = userService.createUser(employeeDefinition.userDefinition());
-
-        AssemblyTeam team = null;
-        if(employeeDefinition.teamId() != null) {
-            if(user.hasRole(Role.MANAGER))
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
-
-            team = teamRepository
-                    .findById(employeeDefinition.teamId())
-                    .orElseThrow(ResourceNotFoundException::new);
-        }
-
-        Employee employee = new Employee(
-                employeeDefinition.person().firstName(),
-                employeeDefinition.person().lastName(),
-                employeeDefinition.employeeNumber(),
-                employeeDefinition.position(),
-                team,
-                null,
-                user,
-                null
-        );
-
-        return employeeRepository.save(employee);
+        return employeeService.createEmployee(employeeDefinition);
     }
 
     @GetMapping("/self")
@@ -112,9 +85,7 @@ public class AuthController {
             return;
         }
 
-        Employee user = employeeRepository
-                .findById(pwUpdateRequest.userId())
-                .orElseThrow(ResourceNotFoundException::new);
+        Employee user = employeeService.getEmployee(pwUpdateRequest.userId());
 
         userService.changePassword(user, pwUpdateRequest.password());
     }

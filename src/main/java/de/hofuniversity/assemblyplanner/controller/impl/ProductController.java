@@ -6,6 +6,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductCreateReque
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductUpdateRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository;
+import de.hofuniversity.assemblyplanner.service.api.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,17 +23,18 @@ import java.util.UUID;
 @Tag(name = "Products")
 public class ProductController {
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public ProductController(@Autowired ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    @Autowired
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping
     @Operation(summary = "retrieves all existing products")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Product> getProducts() {
-        return productRepository.findAll();
+        return productService.getProducts();
     }
 
     @GetMapping("/{productId}")
@@ -41,24 +43,14 @@ public class ProductController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Product getProduct(@PathVariable UUID productId) {
-        return productRepository
-                .findById(productId)
-                .orElseThrow(ResourceNotFoundException::new);
+        return productService.getProduct(productId);
     }
 
     @PostMapping
     @Operation(summary = "creates a new product")
     @ResponseStatus(HttpStatus.CREATED)
     public Product createProduct(@RequestBody @Valid ProductCreateRequest createRequest) {
-        Product product = new Product(
-                new Description(createRequest.name(), createRequest.description()),
-                createRequest.materialWidth(),
-                createRequest.materialName(),
-                createRequest.materialGroup(),
-                createRequest.productGroup()
-        );
-
-        return productRepository.save(product);
+        return productService.createProduct(createRequest);
     }
 
     @PatchMapping("/{productId}")
@@ -67,22 +59,7 @@ public class ProductController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Product patchProduct(@PathVariable UUID productId, @RequestBody ProductUpdateRequest updateRequest) {
-        Product product = productRepository
-                .findById(productId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        if(updateRequest.materialGroup() != null)
-            product.setMaterialGroup(updateRequest.productGroup());
-        if(updateRequest.productGroup() != null)
-            product.setProductGroup(updateRequest.productGroup());
-        if(updateRequest.materialWidth() != 0.0)
-            product.setMaterialWidth(updateRequest.materialWidth());
-        if(updateRequest.description() != null)
-            product.getDescription().setDescription(updateRequest.description());
-        if(updateRequest.name() != null)
-            product.getDescription().setName(updateRequest.name());
-
-        return productRepository.save(product);
+        return productService.patchProduct(productId, updateRequest);
     }
 
     @PutMapping("/{productId}")
@@ -91,15 +68,7 @@ public class ProductController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Product putProduct(@PathVariable UUID productId, @RequestBody ProductUpdateRequest updateRequest) {
-        Product product = productRepository
-                .findById(productId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        BeanUtils.copyProperties(updateRequest, product, "description");
-        product.getDescription().setName(updateRequest.name());
-        product.getDescription().setDescription(updateRequest.description());
-
-        return productRepository.save(product);
+        return productService.putProduct(productId, updateRequest);
     }
 
     @DeleteMapping("/{productId}")
@@ -108,11 +77,6 @@ public class ProductController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Product deleteProduct(@PathVariable UUID productId) {
-        Product product = productRepository
-                .findById(productId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        productRepository.delete(product);
-        return product;
+        return productService.deleteProduct(productId);
     }
 }

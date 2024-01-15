@@ -8,6 +8,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductPartAppendR
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductPartUpdateRequest;
 import de.hofuniversity.assemblyplanner.persistence.repository.PartRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository;
+import de.hofuniversity.assemblyplanner.service.api.ProductPartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -21,20 +22,17 @@ import java.util.UUID;
 @RequestMapping("/products/{productId}/parts")
 public class ProductPartController {
 
-    private final PartRepository partRepository;
-    private final ProductRepository productRepository;
+    private final ProductPartService productPartService;
 
-    public ProductPartController(@Autowired PartRepository partRepository,
-                                 @Autowired ProductRepository productRepository) {
-        this.partRepository = partRepository;
-        this.productRepository = productRepository;
+    public ProductPartController(ProductPartService productPartService) {
+        this.productPartService = productPartService;
     }
 
     @GetMapping
     @Operation(summary = "gets all parts associated to a product")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Part> getParts(@PathVariable UUID productId) {
-        return partRepository.findPartsByProductId(productId);
+        return productPartService.getParts(productId);
     }
 
     @GetMapping("/{partId}")
@@ -44,9 +42,7 @@ public class ProductPartController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Part getPart(@PathVariable UUID productId, @PathVariable UUID partId) {
-        return partRepository
-                .findPartByProductId(productId, partId)
-                .orElseThrow(ResourceNotFoundException::new);
+        return productPartService.getPart(productId, partId);
     }
 
     @PostMapping
@@ -55,11 +51,7 @@ public class ProductPartController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public Product addPart(@PathVariable UUID productId, @RequestBody @Valid ProductPartAppendRequest appendRequest) {
-        Product product = productRepository.findById(productId).orElseThrow(ResourceNotFoundException::new);
-        Part part = partRepository.findById(appendRequest.partId()).orElseThrow(ResourceNotFoundException::new);
-        product.addPart(part, appendRequest.amount());
-        partRepository.save(part);
-        return productRepository.save(product);
+        return productPartService.addPart(productId, appendRequest);
     }
 
     @DeleteMapping("/{partId}")
@@ -69,12 +61,7 @@ public class ProductPartController {
     })
     @ResponseStatus(HttpStatus.OK)
     public ProductPart deletePart(@PathVariable UUID productId, @PathVariable UUID partId) {
-        Product product = productRepository.findById(productId).orElseThrow(ResourceNotFoundException::new);
-        Part part = partRepository.findPartByProductId(productId, partId).orElseThrow(ResourceNotFoundException::new);
-        ProductPart association = product.removePart(part);
-        partRepository.save(part);
-        productRepository.save(product);
-        return association;
+        return productPartService.deletePart(productId, partId);
     }
 
     @PutMapping("/{partId}")
@@ -86,15 +73,6 @@ public class ProductPartController {
     public ProductPart updateAmount(@PathVariable UUID productId,
                                     @PathVariable UUID partId,
                                     @RequestBody ProductPartUpdateRequest updateRequest) {
-        Part part = partRepository.findPartByProductId(productId, partId).orElseThrow(ResourceNotFoundException::new);
-        ProductPart productPart = part.getProducts().stream()
-                .filter(pp -> pp.getProduct().getId().equals(productId))
-                .findAny()
-                .orElseThrow(ResourceNotFoundException::new);
-
-        productPart.setAmount(updateRequest.amount());
-        partRepository.save(part);
-        productRepository.save(productPart.getProduct());
-        return productPart;
+        return productPartService.updateAmount(productId, partId, updateRequest);
     }
 }

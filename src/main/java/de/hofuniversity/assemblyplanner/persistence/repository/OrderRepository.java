@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -16,4 +17,7 @@ public interface OrderRepository extends CrudRepository<Order, UUID>, JpaSpecifi
 
     @Query("SELECT o FROM Order o WHERE o.customer.id = :customerId AND o.id = :orderId")
     Optional<Order> findByCustomerId(UUID customerId, UUID orderId);
+
+    @Query("SELECT o FROM Order o WHERE o.team.id = :teamId")
+    Set<Order> findByTeamId(UUID teamId);
 }

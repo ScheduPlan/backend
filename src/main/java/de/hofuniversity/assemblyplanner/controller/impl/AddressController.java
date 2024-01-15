@@ -8,6 +8,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.AddressQuery;
 import de.hofuniversity.assemblyplanner.persistence.model.specification.AddressSpecification;
 import de.hofuniversity.assemblyplanner.persistence.repository.AddressRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
+import de.hofuniversity.assemblyplanner.service.api.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -24,19 +25,18 @@ import java.util.UUID;
 @RequestMapping("/customers/{customerId}/addresses")
 public class AddressController {
 
-    private final AddressRepository addressRepository;
-    private final CustomerRepository customerRepository;
+    private final AddressService addressService;
 
-    public AddressController(@Autowired AddressRepository addressRepository, @Autowired CustomerRepository customerRepository) {
-        this.addressRepository = addressRepository;
-        this.customerRepository = customerRepository;
+    @Autowired
+    public AddressController(AddressService addressService) {
+        this.addressService = addressService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "retrieves all addresses for a given customer")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Address> getAddresses(@PathVariable UUID customerId, @ParameterObject @ModelAttribute AddressQuery query) {
-        return addressRepository.findAll(new AddressSpecification(query, customerId));
+        return addressService.getAddresses(customerId, query);
     }
 
     @GetMapping(value = "/{addressId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,9 +45,7 @@ public class AddressController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Address getAddress(@PathVariable UUID customerId, @PathVariable UUID addressId) {
-        return addressRepository
-                .findAddressByCustomerId(customerId, addressId)
-                .orElseThrow(ResourceNotFoundException::new);
+        return addressService.getAddress(customerId, addressId);
     }
 
     @PostMapping
@@ -56,24 +54,7 @@ public class AddressController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     public Address createAddress(@PathVariable UUID customerId, @RequestBody @Valid AddressCreateRequest createRequest) {
-        Customer customer = customerRepository
-                .findById(customerId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        Address address = new Address(
-                createRequest.country(),
-                createRequest.street(),
-                createRequest.streetNumber(),
-                createRequest.city(),
-                createRequest.zip(),
-                createRequest.description(),
-                createRequest.addressSuffix(),
-                createRequest.addressType()
-        );
-
-        customer.getAddresses().add(address);
-        customerRepository.save(customer);
-        return address;
+        return addressService.createAddress(customerId, createRequest);
     }
 
     @PatchMapping(value = "/{addressId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -82,29 +63,7 @@ public class AddressController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Address patchAddress(@PathVariable UUID customerId, @PathVariable UUID addressId, @RequestBody AddressCreateRequest createRequest) {
-        Address address = addressRepository
-                .findAddressByCustomerId(customerId, addressId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        if(createRequest.country() != null)
-            address.setCountry(createRequest.country());
-        if(createRequest.city() != null)
-            address.setCity(createRequest.city());
-        if(createRequest.addressSuffix() != null)
-            address.setAddressSuffix(createRequest.addressSuffix());
-        if(createRequest.addressType() != null)
-            address.setAddressType(createRequest.addressType());
-        if(createRequest.zip() != null)
-            address.setZip(createRequest.zip());
-        if(createRequest.street() != null)
-            address.setStreet(createRequest.street());
-        if(createRequest.streetNumber() != 0)
-            address.setStreetNumber(createRequest.streetNumber());
-        if(createRequest.description() != null)
-            address.setDescription(createRequest.description());
-
-        addressRepository.save(address);
-        return address;
+        return addressService.patchAddress(customerId, addressId, createRequest);
     }
 
     @PutMapping("/{addressId}")
@@ -113,14 +72,7 @@ public class AddressController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Address putAddress(@PathVariable UUID customerId, @PathVariable UUID addressId, @RequestBody AddressCreateRequest createRequest) {
-        Address address = addressRepository
-                .findAddressByCustomerId(customerId, addressId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        BeanUtils.copyProperties(createRequest, address);
-
-        addressRepository.save(address);
-        return address;
+        return addressService.putAddress(customerId, addressId, createRequest);
     }
 
     @DeleteMapping("/{addressId}")
@@ -129,11 +81,6 @@ public class AddressController {
     })
     @ResponseStatus(HttpStatus.OK)
     public Address deleteAddress(@PathVariable UUID customerId, @PathVariable UUID addressId) {
-        Address address = addressRepository
-                .findAddressByCustomerId(customerId, addressId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        addressRepository.delete(address);
-        return address;
+        return addressService.deleteAddress(customerId, addressId);
     }
 }
