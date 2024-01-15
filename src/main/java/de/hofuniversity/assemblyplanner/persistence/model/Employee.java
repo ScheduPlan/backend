@@ -14,7 +14,7 @@ public class Employee extends Person {
     private Integer employeeNumber;
     private String position;
     @ManyToOne private AssemblyTeam team;
-    @OneToOne(cascade = CascadeType.ALL) private Address address;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true) private Address address;
     @Embedded private User user;
     @ManyToMany
     @JsonIgnore
