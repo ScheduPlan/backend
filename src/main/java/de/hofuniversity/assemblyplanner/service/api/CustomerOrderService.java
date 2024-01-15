@@ -1,14 +1,10 @@
 package de.hofuniversity.assemblyplanner.service.api;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.*;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderCreateRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderQuery;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderUpdateRequest;
 
 import java.util.Set;
 import java.util.UUID;

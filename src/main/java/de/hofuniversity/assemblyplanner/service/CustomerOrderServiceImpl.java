@@ -14,7 +14,6 @@ import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepositor
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.service.api.CustomerOrderService;
-import de.hofuniversity.assemblyplanner.service.api.OrderSearchEngine;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

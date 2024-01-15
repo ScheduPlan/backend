@@ -5,11 +5,6 @@ import de.hofuniversity.assemblyplanner.persistence.model.Product;
 import de.hofuniversity.assemblyplanner.persistence.model.ProductPart;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductPartAppendRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductPartUpdateRequest;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 

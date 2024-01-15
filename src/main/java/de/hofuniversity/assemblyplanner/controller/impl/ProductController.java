@@ -1,17 +1,13 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
-import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.Product;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductCreateRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductUpdateRequest;
-import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
-import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository;
 import de.hofuniversity.assemblyplanner.service.api.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

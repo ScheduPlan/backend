@@ -1,11 +1,7 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
-import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
-import de.hofuniversity.assemblyplanner.persistence.model.Product;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductAppendRequest;
-import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
-import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository;
 import de.hofuniversity.assemblyplanner.service.api.OrderProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @RestController

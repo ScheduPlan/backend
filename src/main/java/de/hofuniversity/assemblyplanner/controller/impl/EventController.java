@@ -2,12 +2,10 @@ package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Event;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EventDateQuery;
-import de.hofuniversity.assemblyplanner.persistence.repository.EventRepository;
 import de.hofuniversity.assemblyplanner.service.api.OrderEventService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

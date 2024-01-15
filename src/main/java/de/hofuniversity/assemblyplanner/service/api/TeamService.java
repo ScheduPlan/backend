@@ -5,11 +5,6 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourc
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.TeamDeleteResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;

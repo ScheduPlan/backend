@@ -1,22 +1,15 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
-import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
-import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourceRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.TeamDeleteResponse;
-import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
-import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
-import de.hofuniversity.assemblyplanner.service.api.CustomerOrderService;
-import de.hofuniversity.assemblyplanner.service.api.OrderService;
 import de.hofuniversity.assemblyplanner.service.api.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/teams")

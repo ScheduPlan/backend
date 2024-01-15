@@ -1,22 +1,14 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
-import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
-import de.hofuniversity.assemblyplanner.persistence.model.*;
+import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequest;
-import de.hofuniversity.assemblyplanner.persistence.repository.AddressRepository;
-import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
-import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
-import de.hofuniversity.assemblyplanner.service.UserService;
 import de.hofuniversity.assemblyplanner.service.api.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 

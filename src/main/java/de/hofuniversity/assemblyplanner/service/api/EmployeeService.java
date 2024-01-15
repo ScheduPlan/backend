@@ -3,11 +3,6 @@ package de.hofuniversity.assemblyplanner.service.api;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeDefinition;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequest;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
