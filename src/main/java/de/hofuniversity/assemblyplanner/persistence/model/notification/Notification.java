@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @Inheritance

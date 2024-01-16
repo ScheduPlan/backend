@@ -1,7 +1,10 @@
 package de.hofuniversity.assemblyplanner.service;
 
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
-import de.hofuniversity.assemblyplanner.persistence.model.*;
+import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
+import de.hofuniversity.assemblyplanner.persistence.model.Customer;
+import de.hofuniversity.assemblyplanner.persistence.model.Order;
+import de.hofuniversity.assemblyplanner.persistence.model.OrderState;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderCreateRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderQuery;

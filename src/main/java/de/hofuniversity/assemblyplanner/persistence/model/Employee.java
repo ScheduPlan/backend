@@ -2,7 +2,6 @@ package de.hofuniversity.assemblyplanner.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.hofuniversity.assemblyplanner.persistence.model.notification.EmployeeNotification;
-import de.hofuniversity.assemblyplanner.persistence.model.notification.EmployeeNotificationKey;
 import de.hofuniversity.assemblyplanner.persistence.model.notification.Notification;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
@@ -107,7 +106,7 @@ public class Employee extends Person {
         return employeeNotification;
     }
 
-    public EmployeeNotification removeNotification(Notification notification) {
+    public EmployeeNotification removeNotification(Notification<?> notification) {
         EmployeeNotification employeeNotification = this.getNotifications()
                 .stream()
                 .filter(n -> n.getNotification().equals(notification))

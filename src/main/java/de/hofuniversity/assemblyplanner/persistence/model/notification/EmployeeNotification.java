@@ -1,8 +1,10 @@
 package de.hofuniversity.assemblyplanner.persistence.model.notification;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
-import jakarta.persistence.*;
-import org.hibernate.annotations.Type;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.ManyToOne;
 
 import java.util.Objects;
 
@@ -12,24 +14,24 @@ public class EmployeeNotification {
 
     @Id
     @ManyToOne
-    private Notification notification;
+    private Notification<?> notification;
     @Id
     @ManyToOne
     private Employee employee;
     private boolean read;
 
-    public EmployeeNotification(Notification notification, Employee employee) {
+    public EmployeeNotification(Notification<?> notification, Employee employee) {
         this.notification = notification;
         this.employee = employee;
     }
 
     public EmployeeNotification(){}
 
-    public Notification getNotification() {
+    public Notification<?> getNotification() {
         return notification;
     }
 
-    public void setNotification(Notification notification) {
+    public void setNotification(Notification<?> notification) {
         this.notification = notification;
     }
 

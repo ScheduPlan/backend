@@ -1,13 +1,10 @@
 package de.hofuniversity.assemblyplanner.persistence.model.notification;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Entity
 public class OrderNotification extends Notification<OrderNotificationPayload> {

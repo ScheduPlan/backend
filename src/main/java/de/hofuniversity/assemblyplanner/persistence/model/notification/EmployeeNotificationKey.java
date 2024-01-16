@@ -1,7 +1,5 @@
 package de.hofuniversity.assemblyplanner.persistence.model.notification;
 
-import jakarta.persistence.Embeddable;
-
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;

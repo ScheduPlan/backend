@@ -2,7 +2,6 @@ package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.dto.NotificationItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.NotificationMarkedEvent;
-import de.hofuniversity.assemblyplanner.persistence.model.notification.Notification;
 import de.hofuniversity.assemblyplanner.service.api.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

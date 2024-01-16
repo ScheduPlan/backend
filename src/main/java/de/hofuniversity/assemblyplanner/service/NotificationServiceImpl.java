@@ -6,7 +6,6 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.NotificationItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.NotificationMarkedEvent;
 import de.hofuniversity.assemblyplanner.persistence.model.notification.Notification;
 import de.hofuniversity.assemblyplanner.persistence.repository.NotificationRepository;
-import de.hofuniversity.assemblyplanner.service.api.EmployeeService;
 import de.hofuniversity.assemblyplanner.service.api.NotificationHandler;
 import de.hofuniversity.assemblyplanner.service.api.NotificationService;
 import jakarta.validation.constraints.NotNull;
@@ -15,8 +14,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
