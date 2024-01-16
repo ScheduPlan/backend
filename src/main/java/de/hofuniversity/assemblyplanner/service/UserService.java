@@ -86,7 +86,9 @@ public class UserService implements UserDetailsService {
         Object auth = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(auth == null)
             return null;
-        return ((EmployeeUserDetailsAdapter) auth).getEmployee();
+        return employeeRepository
+                .findById(((EmployeeUserDetailsAdapter) auth).getEmployee().getId())
+                .orElse(null);
     }
 
     public static String sanitizeRoleString(String roleStr) {

@@ -1,22 +1,23 @@
 package de.hofuniversity.assemblyplanner.service;
 
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
-import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
-import de.hofuniversity.assemblyplanner.persistence.model.Customer;
-import de.hofuniversity.assemblyplanner.persistence.model.Order;
-import de.hofuniversity.assemblyplanner.persistence.model.OrderState;
+import de.hofuniversity.assemblyplanner.persistence.model.*;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderCreateRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderQuery;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderUpdateRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.notification.OrderNotification;
+import de.hofuniversity.assemblyplanner.persistence.model.notification.OrderNotificationPayload;
 import de.hofuniversity.assemblyplanner.persistence.model.specification.OrderSpecification;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.service.api.CustomerOrderService;
+import de.hofuniversity.assemblyplanner.service.api.NotificationService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 import java.util.UUID;
@@ -24,18 +25,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
-
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final TeamRepository teamRepository;
+    private final NotificationService notificationService;
 
     public CustomerOrderServiceImpl(
             @Autowired OrderRepository orderRepository,
             @Autowired CustomerRepository customerRepository,
-            @Autowired TeamRepository teamRepository) {
+            @Autowired TeamRepository teamRepository,
+            @Autowired NotificationService notificationService) {
         this.orderRepository = orderRepository;
         this.customerRepository = customerRepository;
         this.teamRepository = teamRepository;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -50,6 +53,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    @Transactional
     public Order createOrder(UUID customerId, OrderCreateRequest orderRequest) {
         Customer customer = customerRepository
                 .findById(customerId)
@@ -72,6 +76,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 orderRequest.plannedDuration());
 
         order = orderRepository.save(order);
+
+        if(team != null) {
+            sendNotification(OrderNotification.Type.CREATED, order, customerId);
+        }
 
         return order;
     }
@@ -102,6 +110,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             order.setPlannedDuration(updateRequest.plannedDuration());
         }
 
+        sendNotification(OrderNotification.Type.UPDATED, order, customerId);
+
         return orderRepository.save(order);
     }
 
@@ -120,6 +130,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     .orElseThrow(ResourceNotFoundException::new);
         }
         order.setTeam(team);
+
+        sendNotification(OrderNotification.Type.UPDATED, order, customerId);
 
         return orderRepository.save(order);
     }
@@ -156,5 +168,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 .stream()
                 .map(OrderListItem::new)
                 .collect(Collectors.toSet());
+    }
+
+    private void sendNotification(OrderNotification.Type type, Order order, UUID customer) {
+        try {
+            notificationService.createNotification(new OrderNotification()
+                    .withRecipients(order.getTeam().getEmployees())
+                    .withType(type)
+                    .withPayload(new OrderNotificationPayload(order.getId(), customer)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,9 @@
 package de.hofuniversity.assemblyplanner.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.hofuniversity.assemblyplanner.persistence.model.notification.EmployeeNotification;
+import de.hofuniversity.assemblyplanner.persistence.model.notification.EmployeeNotificationKey;
+import de.hofuniversity.assemblyplanner.persistence.model.notification.Notification;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
@@ -19,6 +22,8 @@ public class Employee extends Person {
     @ManyToMany
     @JsonIgnore
     private Set<Event> helpsOn;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EmployeeNotification> notifications;
 
     public Employee(String firstName, String lastName, Integer employeeNumber, String position, AssemblyTeam team, Address address, User user, Set<Event> helpsOn) {
         this(firstName, lastName, user);
@@ -85,6 +90,36 @@ public class Employee extends Person {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public Set<EmployeeNotification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<EmployeeNotification> notifications) {
+        this.notifications = notifications;
+    }
+
+    public EmployeeNotification addNotification(Notification<?> notification) {
+        EmployeeNotification employeeNotification = new EmployeeNotification(notification, this);
+        notifications.add(employeeNotification);
+        notification.getRecipients().add(employeeNotification);
+        return employeeNotification;
+    }
+
+    public EmployeeNotification removeNotification(Notification notification) {
+        EmployeeNotification employeeNotification = this.getNotifications()
+                .stream()
+                .filter(n -> n.getNotification().equals(notification))
+                .findFirst()
+                .orElse(null);
+
+        if(employeeNotification == null)
+            return null;
+
+        employeeNotification.getNotification().getRecipients().remove(employeeNotification);
+        this.getNotifications().remove(employeeNotification);
+        return employeeNotification;
     }
 
     @Override
