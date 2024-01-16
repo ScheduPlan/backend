@@ -29,7 +29,7 @@ public class NotificationController {
     @GetMapping
     @Operation(summary = "returns notifications for the logged-in user")
     @ResponseStatus(HttpStatus.OK)
-    public Set<NotificationItem> getNotifications(@RequestParam Date after) {
+    public Set<NotificationItem> getNotifications(@RequestParam(required = false) Date after) {
         if(after == null)
             return notificationService.getNotifications();
         return notificationService.getNotifications(after);
