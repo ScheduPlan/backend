@@ -28,7 +28,7 @@ public abstract class Notification<T extends NotificationPayload> {
     }
 
     public Notification() {
-
+        this.recipients = new HashSet<>();
     }
 
     public UUID getId() {
@@ -40,7 +40,7 @@ public abstract class Notification<T extends NotificationPayload> {
     }
 
     public String getNotificationType() {
-        return getClass().getName();
+        return getClass().getSimpleName();
     }
 
     public Set<EmployeeNotification> getRecipients() {
