@@ -8,7 +8,7 @@ public record OrderDeleteResponse (
         UUID id,
         Integer number,
         String description,
-        Integer commissionNumber,
+        String commissionNumber,
         Double weight,
         Double plannedDuration
 ) {

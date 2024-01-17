@@ -7,7 +7,7 @@ import java.util.UUID;
 public record OrderUpdateRequest(
         Integer number,
         String description,
-        Integer commissionNumber,
+        String commissionNumber,
         Double weight,
         OrderState state,
         UUID teamId,

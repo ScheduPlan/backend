@@ -4,7 +4,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.OrderState;
 
 public record OrderQuery(
         Integer number,
-        Integer commissionNumber,
+        String commissionNumber,
         OrderState[] states,
         String description
 )
