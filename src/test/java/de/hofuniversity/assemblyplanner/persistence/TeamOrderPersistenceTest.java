@@ -31,7 +31,7 @@ public class TeamOrderPersistenceTest {
                 new Order(
                         123,
                         "test",
-                        1234,
+                        "1234",
                         1.0,
                         OrderState.PLANNED,
                         null,
