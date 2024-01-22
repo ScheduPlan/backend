@@ -124,7 +124,7 @@ public class EventServiceImpl implements OrderEventService {
     }
 
     @Override
-    public Event deleteEvent(UUID customerId,
+    public void deleteEvent(UUID customerId,
                              UUID orderId,
                              UUID eventId) {
         Event event = eventRepository
@@ -132,7 +132,6 @@ public class EventServiceImpl implements OrderEventService {
                 .orElseThrow(ResourceNotFoundException::new);
 
         eventRepository.delete(event);
-        return event;
     }
 }
 

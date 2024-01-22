@@ -80,10 +80,10 @@ public class OrderEventController {
     @Operation(summary = "deletes an event", responses = {
             @ApiResponse(responseCode = "404", description = "the requested event, order or customer was not found")
     })
-    @ResponseStatus(HttpStatus.OK)
-    public Event deleteEvent(@PathVariable UUID customerId,
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEvent(@PathVariable UUID customerId,
                           @PathVariable UUID orderId,
                           @PathVariable UUID eventId) {
-        return eventService.deleteEvent(customerId, orderId, eventId);
+        eventService.deleteEvent(customerId, orderId, eventId);
     }
 }

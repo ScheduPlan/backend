@@ -27,7 +27,7 @@ public interface OrderEventService {
                    UUID eventId,
                    EventCreateRequest putRequest);
 
-    Event deleteEvent(UUID customerId,
+    void deleteEvent(UUID customerId,
                       UUID orderId,
                       UUID eventId);
 }
