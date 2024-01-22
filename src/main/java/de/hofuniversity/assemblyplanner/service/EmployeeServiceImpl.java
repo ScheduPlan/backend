@@ -96,7 +96,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if(patchRequest.teamId() != null){
-            if(userService.getCurrentUser().getUser().hasRole(Role.MANAGER))
+            if(employee.getUser().hasRole(Role.MANAGER))
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
 
             AssemblyTeam team = teamRepository.findById(patchRequest.teamId())
