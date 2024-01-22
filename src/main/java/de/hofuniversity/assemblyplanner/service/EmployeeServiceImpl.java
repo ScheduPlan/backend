@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +57,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee createEmployee(EmployeeDefinition employeeDefinition) {
+        if(userService.getCurrentUser().getUser().hasRole(Role.MANAGER))
+            throw new AccessDeniedException("the current user is not allowed to create new users");
+
         User user = userService.createUser(employeeDefinition.userDefinition());
 
         AssemblyTeam team = null;
@@ -85,6 +89,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee patchEmployee(UUID employeeId, EmployeeUpdateRequest patchRequest) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(ResourceNotFoundException::new);
+        Employee currentUser = userService.getCurrentUser();
+
+        if(!(employee.equals(currentUser) || currentUser.getUser().isSuperiorTo(employee.getUser()))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you are not allowed to change this user's data");
+        }
 
         if(patchRequest.employeeNumber() != null)
             employee.setEmployeeNumber(patchRequest.employeeNumber());
@@ -130,7 +139,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee putEmployee(UUID employeeId, EmployeeUpdateRequest putRequest) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(ResourceNotFoundException::new);
-        if(putRequest.teamId() != null && userService.getCurrentUser().getUser().hasRole(Role.MANAGER))
+        Employee currentUser = userService.getCurrentUser();
+
+        if(!(employee.equals(currentUser) || currentUser.getUser().isSuperiorTo(employee.getUser()))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you are not allowed to change this user's data");
+        }
+
+        if(putRequest.teamId() != null && employee.getUser().hasRole(Role.MANAGER))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
 
         BeanUtils.copyProperties(putRequest, employee, "user", "person");
