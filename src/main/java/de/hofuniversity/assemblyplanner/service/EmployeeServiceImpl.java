@@ -57,7 +57,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee createEmployee(EmployeeDefinition employeeDefinition) {
-        if(userService.getCurrentUser().getUser().hasRole(Role.MANAGER))
+        User currentUser = userService.getCurrentUser().getUser();
+        if(!currentUser.isSuperiorTo(employeeDefinition.userDefinition().role())
+                || (employeeDefinition.userDefinition().role() == Role.ADMINISTRATOR && !currentUser.hasRole(Role.ADMINISTRATOR)))
             throw new AccessDeniedException("the current user is not allowed to create new users");
 
         User user = userService.createUser(employeeDefinition.userDefinition());

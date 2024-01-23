@@ -137,11 +137,19 @@ public class User implements Serializable, UserDetails {
     }
 
     public boolean isSuperiorTo(User other) {
-        return this.getRole().ordinal() > other.getRole().ordinal();
+        return isSuperiorTo(other.getRole());
+    }
+
+    public boolean isSuperiorTo(Role other) {
+        return this.getRole().ordinal() > other.ordinal();
     }
 
     public boolean isInferiorTo(User other) {
-        return this.getRole().ordinal() < other.getRole().ordinal();
+        return isInferiorTo(other.getRole());
+    }
+
+    public boolean isInferiorTo(Role other) {
+        return this.getRole().ordinal() < other.ordinal();
     }
 
     public boolean hasEqualRoleTo(User other) {
