@@ -22,6 +22,7 @@ public class Employee extends Person {
     @JsonIgnore
     private Set<Event> helpsOn;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<EmployeeNotification> notifications;
 
     public Employee(String firstName, String lastName, Integer employeeNumber, String position, AssemblyTeam team, Address address, User user, Set<Event> helpsOn) {
