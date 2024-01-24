@@ -19,9 +19,11 @@ public interface EventRepository extends CrudRepository<Event, UUID>, JpaSpecifi
     @Query("SELECT e FROM Event e WHERE e.id = :eventId AND e.order.id = :orderId AND e.order.customer.id = :customerId")
     Optional<Event> findEventByOrderId(UUID customerId, UUID orderId, UUID eventId);
 
-    @Query("SELECT e FROM Event e WHERE ((e.startDate > :#{#event.startDate} AND e.startDate < :#{#event.endDate})" +
-            " OR (e.startDate < :#{#event.startDate} AND e.endDate > :#{#event.startDate}))" +
-            " AND e.id != :#{#event.id}" +
-            " AND (e.order.id IS NULL OR e.order.id = :#{#event.order?.id} OR :#{#event.order?.id} IS NULL)")
+    @Query("SELECT e FROM Event e " +
+            "LEFT JOIN Order o ON o.id = e.order.id " +
+            "WHERE ((e.startDate > :#{#event.startDate} AND e.startDate < :#{#event.endDate}) " +
+            "OR (e.startDate < :#{#event.startDate} AND e.endDate > :#{#event.startDate})) " +
+            "AND e != :#{#event} " +
+            "AND (o IS NULL OR e.order = :#{#event.order} OR o.team IS NULL OR o.team = :#{#event.order?.team})")
     Set<Event> findOverlappingEvents(@Param("event") Event event);
 }
