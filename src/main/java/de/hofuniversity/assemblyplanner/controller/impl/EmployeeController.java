@@ -55,7 +55,7 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}")
-    @Operation(summary = "updates an employee. NULL values are ignored.", responses = {
+    @Operation(summary = "updates an employee.", responses = {
             @ApiResponse(responseCode = "404", description = "the employee was not found")
     })
     @ResponseStatus(HttpStatus.OK)
