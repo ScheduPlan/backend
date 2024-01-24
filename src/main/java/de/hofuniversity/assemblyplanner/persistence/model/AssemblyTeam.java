@@ -2,6 +2,7 @@ package de.hofuniversity.assemblyplanner.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
+import de.hofuniversity.assemblyplanner.persistence.model.embedded.TeamDescription;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public class AssemblyTeam {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Embedded private Description description;
+    @Embedded private TeamDescription description;
     @OneToMany(mappedBy = "team")
     @JsonIgnore
     private List<Employee> employees;
@@ -32,7 +33,7 @@ public class AssemblyTeam {
         }
     }
 
-    public AssemblyTeam(Description description, List<Employee> employees, List<Order> orders) {
+    public AssemblyTeam(TeamDescription description, List<Employee> employees, List<Order> orders) {
         this.description = description;
         this.employees = employees;
         this.orders = orders;
@@ -44,11 +45,11 @@ public class AssemblyTeam {
         return id;
     }
 
-    public Description getDescription() {
+    public TeamDescription getDescription() {
         return description;
     }
 
-    public void setDescription(Description description) {
+    public void setDescription(TeamDescription description) {
         this.description = description;
     }
 

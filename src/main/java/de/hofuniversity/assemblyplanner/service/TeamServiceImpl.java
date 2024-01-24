@@ -9,6 +9,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.TeamDeleteResponse;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
+import de.hofuniversity.assemblyplanner.persistence.model.embedded.TeamDescription;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class TeamServiceImpl implements de.hofuniversity.assemblyplanner.service
     @Override
     public AssemblyTeam createTeam(DescribableResourceRequest teamCreateRequest) {
         AssemblyTeam team = new AssemblyTeam(
-                new Description(teamCreateRequest.name(), teamCreateRequest.description()), null, null);
+                new TeamDescription(teamCreateRequest.name(), teamCreateRequest.description()), null, null);
 
         return teamRepository.save(team);
     }
