@@ -1,6 +1,8 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeDto;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequest;
 import de.hofuniversity.assemblyplanner.service.api.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,15 +32,17 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "the employee was not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public Employee getEmployee(@PathVariable UUID employeeId) {
-        return employeeService.getEmployee(employeeId);
+    public EmployeeDto getEmployee(@PathVariable UUID employeeId) {
+        return new EmployeeDto(employeeService.getEmployee(employeeId));
     }
 
     @GetMapping
     @Operation(summary = "gets all employees")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Employee> getEmployees() {
-        return employeeService.getEmployees();
+    public Iterable<EmployeeListItem> getEmployees() {
+        List<EmployeeListItem> items = new ArrayList<>();
+        employeeService.getEmployees().forEach(e -> items.add(new EmployeeListItem(e)));
+        return items;
     }
 
     @PatchMapping("/{employeeId}")
@@ -44,8 +50,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "the employee was not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public Employee patchEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeUpdateRequest patchRequest) {
-        return employeeService.patchEmployee(employeeId, patchRequest);
+    public EmployeeDto patchEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeUpdateRequest patchRequest) {
+        return new EmployeeDto(employeeService.patchEmployee(employeeId, patchRequest));
     }
 
     @PutMapping("/{employeeId}")
@@ -53,8 +59,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "the employee was not found")
     })
     @ResponseStatus(HttpStatus.OK)
-    public Employee putEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeUpdateRequest putRequest) {
-        return employeeService.putEmployee(employeeId, putRequest);
+    public EmployeeDto putEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeUpdateRequest putRequest) {
+        return new EmployeeDto(employeeService.putEmployee(employeeId, putRequest));
     }
 
     @DeleteMapping("/{userId}")
