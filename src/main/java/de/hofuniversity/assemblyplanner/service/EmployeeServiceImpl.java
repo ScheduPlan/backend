@@ -147,8 +147,18 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you are not allowed to change this user's data");
         }
 
-        if(putRequest.teamId() != null && employee.getUser().hasRole(Role.MANAGER))
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
+        if(putRequest.teamId() != null) {
+            if (employee.getUser().hasRole(Role.MANAGER))
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
+
+            AssemblyTeam team = teamRepository
+                    .findById(putRequest.teamId())
+                    .orElseThrow(ResourceNotFoundException::new);
+
+            employee.setTeam(team);
+        } else {
+            employee.setTeam(null);
+        }
 
         BeanUtils.copyProperties(putRequest, employee, "user", "person");
         BeanUtils.copyProperties(putRequest.user(), employee.getUser());
