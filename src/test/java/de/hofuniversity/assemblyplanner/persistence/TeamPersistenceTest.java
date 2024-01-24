@@ -2,6 +2,7 @@ package de.hofuniversity.assemblyplanner.persistence;
 
 import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
+import de.hofuniversity.assemblyplanner.persistence.model.embedded.TeamDescription;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class TeamPersistenceTest {
 
     @Test
     public void shouldFindCreatedTeam() {
-        testEntityManager.persist(new AssemblyTeam(new Description("test", "test"), List.of(), List.of()));
+        testEntityManager.persist(new AssemblyTeam(new TeamDescription("test", "test"), List.of(), List.of()));
         testEntityManager.flush();
 
         assertThat(teamRepository.findAll())
@@ -33,7 +34,7 @@ public class TeamPersistenceTest {
 
     @Test
     public void shouldCreateTeam() {
-        assertThatCode(() -> teamRepository.save(new AssemblyTeam(new Description("test", "test"), null, null)))
+        assertThatCode(() -> teamRepository.save(new AssemblyTeam(new TeamDescription("test", "test"), null, null)))
                 .doesNotThrowAnyException();
 
         assertThat(teamRepository.findAll()).hasSize(1);

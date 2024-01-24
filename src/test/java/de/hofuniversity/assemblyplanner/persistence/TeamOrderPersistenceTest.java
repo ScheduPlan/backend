@@ -4,6 +4,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.OrderState;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
+import de.hofuniversity.assemblyplanner.persistence.model.embedded.TeamDescription;
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.util.JpaUtil;
@@ -40,7 +41,7 @@ public class TeamOrderPersistenceTest {
                         null));
 
         AssemblyTeam t = teamRepository.save(
-                new AssemblyTeam(new Description("test", "test"), null, null));
+                new AssemblyTeam(new TeamDescription("test", "test"), null, null));
 
         o = orderRepository.findById(o.getId()).orElseThrow();
         t = teamRepository.findById(t.getId()).orElseThrow();
