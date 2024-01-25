@@ -15,6 +15,6 @@ public record EmployeeDto (
 ) {
     public EmployeeDto(Employee employee) {
         this(employee.getId(), employee.getFirstName(), employee.getLastName(), employee.getEmployeeNumber(),
-                employee.getPosition(), employee.getTeam().getId(), new UserDto(employee.getUser()));
+                employee.getPosition(), employee.getTeam() == null ? null : employee.getTeam().getId(), new UserDto(employee.getUser()));
     }
 }
