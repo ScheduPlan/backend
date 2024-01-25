@@ -1,6 +1,7 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
+import de.hofuniversity.assemblyplanner.persistence.model.Role;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeDto;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeListItem;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequest;
@@ -39,9 +40,10 @@ public class EmployeeController {
     @GetMapping
     @Operation(summary = "gets all employees")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<EmployeeListItem> getEmployees() {
+    public Iterable<EmployeeListItem> getEmployees(@RequestParam(required = false) Role role) {
         List<EmployeeListItem> items = new ArrayList<>();
-        employeeService.getEmployees().forEach(e -> items.add(new EmployeeListItem(e)));
+        Iterable<Employee> employees = role == null ? employeeService.getEmployees() : employeeService.getEmployeesWithRole(role);
+        employees.forEach(e -> items.add(new EmployeeListItem(e)));
         return items;
     }
 

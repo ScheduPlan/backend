@@ -175,6 +175,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public Iterable<Employee> getEmployeesWithRole(Role role) {
+        return employeeRepository.findByRole(role);
+    }
+
+    @Override
     public void deleteUser(UUID userId) {
         Employee employee = employeeRepository.findById(userId).orElseThrow(ResourceNotFoundException::new);
         try {

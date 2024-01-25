@@ -1,6 +1,7 @@
 package de.hofuniversity.assemblyplanner.service.api;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
+import de.hofuniversity.assemblyplanner.persistence.model.Role;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeDefinition;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequest;
 
@@ -18,6 +19,8 @@ public interface EmployeeService {
     Employee putEmployee(UUID employeeId, EmployeeUpdateRequest putRequest);
 
     Employee findHelper(UUID customerId, UUID orderId, UUID eventId, UUID helperId);
+
+    Iterable<Employee> getEmployeesWithRole(Role role);
 
     void deleteUser(UUID userId);
 }
