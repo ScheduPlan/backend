@@ -1,9 +1,7 @@
 package de.hofuniversity.assemblyplanner.persistence.model.specification;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
-import de.hofuniversity.assemblyplanner.persistence.model.Person;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeQuery;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.PersonQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -25,7 +23,7 @@ public class EmployeeSpecification implements Specification<Employee> {
 
         if(employeeQuery.role() != null) {
             predicates.add(
-                    criteriaBuilder.equal(root.get("role"), employeeQuery.role())
+                    criteriaBuilder.equal(root.get("user").get("role"), employeeQuery.role())
             );
         }
 
@@ -35,11 +33,16 @@ public class EmployeeSpecification implements Specification<Employee> {
             );
         }
 
-        if(employeeQuery.firstName() != null || employeeQuery.lastName() != null) {
-            var subRoot = query.from(Person.class);
-            var pQuery = new PersonQuery(employeeQuery.firstName(), employeeQuery.lastName());
-            predicates.add(new PersonSpecification(pQuery)
-                    .toPredicate(subRoot, query, criteriaBuilder));
+        if(employeeQuery.firstName() != null) {
+            predicates.add(
+                    criteriaBuilder.like(root.get("firstName"), "%" + employeeQuery.firstName() + "%")
+            );
+        }
+
+        if(employeeQuery.lastName() != null) {
+            predicates.add(
+                    criteriaBuilder.like(root.get("lastName"), "%" + employeeQuery.lastName() + "%")
+            );
         }
 
         return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
