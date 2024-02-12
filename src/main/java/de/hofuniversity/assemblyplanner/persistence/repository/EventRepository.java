@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -25,5 +26,5 @@ public interface EventRepository extends CrudRepository<Event, UUID>, JpaSpecifi
             "OR (e.startDate < :#{#event.startDate} AND e.endDate > :#{#event.startDate})) " +
             "AND e != :#{#event} " +
             "AND (o IS NULL OR e.order = :#{#event.order} OR o.team IS NULL OR o.team = :#{#event.order?.team})")
-    Set<Event> findOverlappingEvents(@Param("event") Event event);
+    List<Event> findOverlappingEvents(@Param("event") Event event);
 }

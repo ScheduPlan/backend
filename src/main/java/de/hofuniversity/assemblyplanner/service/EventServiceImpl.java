@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
@@ -53,6 +54,7 @@ public class EventServiceImpl implements OrderEventService {
     }
 
     @Override
+    @Transactional
     public Event createEvent(UUID customerId,
                              UUID orderId,
                              EventCreateRequest createRequest)
@@ -71,10 +73,14 @@ public class EventServiceImpl implements OrderEventService {
                 null
         );
 
-        if(createRequest.endDate() != null && createRequest.date().after(createRequest.endDate()))
+        event = eventRepository.save(event);
+        if(createRequest.endDate() != null && createRequest.date().after(createRequest.endDate())) {
+            eventRepository.delete(event);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "creating events with an end date prior to the start date is forbidden.");
+        }
 
         if(!eventRepository.findOverlappingEvents(event).isEmpty()) {
+            eventRepository.delete(event);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "event overlaps with another event for the same order");
         }
 

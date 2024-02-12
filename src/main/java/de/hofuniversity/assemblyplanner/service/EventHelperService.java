@@ -8,6 +8,7 @@ import de.hofuniversity.assemblyplanner.persistence.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,7 @@ public class EventHelperService {
         if(helper.getTeam() != null && helper.getTeam().equals(event.getOrder().getTeam()))
             throw new IllegalArgumentException("the employee is already registered as a team member");
 
-        Set<Event> overlaps = eventRepository.findOverlappingEvents(event);
+        List<Event> overlaps = eventRepository.findOverlappingEvents(event);
         overlaps = overlaps.stream()
                 .filter(e -> {
                     boolean isHelper = !e.getHelpers().contains(helper);
@@ -48,7 +49,7 @@ public class EventHelperService {
 
                     boolean isTeamMember = o.getTeam().getEmployees().stream().anyMatch(member -> member.equals(helper));
                     return !(isHelper || isTeamMember);
-                }).collect(Collectors.toSet());
+                }).collect(Collectors.toList());
 
         if(!overlaps.isEmpty())
             throw new IllegalArgumentException("the employee is already working on another event in the same timeframe");
