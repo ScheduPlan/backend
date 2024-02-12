@@ -29,7 +29,7 @@ public class EmployeeSpecification implements Specification<Employee> {
 
         if(employeeQuery.unassigned() != null && employeeQuery.unassigned()) {
             predicates.add(
-                    criteriaBuilder.isNotNull(root.get("team"))
+                    criteriaBuilder.isNull(root.get("team"))
             );
         }
 
