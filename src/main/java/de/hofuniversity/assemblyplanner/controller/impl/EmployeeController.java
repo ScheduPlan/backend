@@ -1,14 +1,15 @@
 package de.hofuniversity.assemblyplanner.controller.impl;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
-import de.hofuniversity.assemblyplanner.persistence.model.Role;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeDto;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeListItem;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeQuery;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequest;
 import de.hofuniversity.assemblyplanner.service.api.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +41,9 @@ public class EmployeeController {
     @GetMapping
     @Operation(summary = "gets all employees")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<EmployeeListItem> getEmployees(@RequestParam(required = false) Role role) {
+    public Iterable<EmployeeListItem> getEmployees(@ParameterObject @ModelAttribute EmployeeQuery query) {
         List<EmployeeListItem> items = new ArrayList<>();
-        Iterable<Employee> employees = role == null ? employeeService.getEmployees() : employeeService.getEmployeesWithRole(role);
+        Iterable<Employee> employees = employeeService.queryEmployees(query);
         employees.forEach(e -> items.add(new EmployeeListItem(e)));
         return items;
     }

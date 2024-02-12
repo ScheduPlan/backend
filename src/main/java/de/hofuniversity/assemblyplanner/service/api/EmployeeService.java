@@ -3,6 +3,7 @@ package de.hofuniversity.assemblyplanner.service.api;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.Role;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeDefinition;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeQuery;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequest;
 
 import java.util.UUID;
@@ -11,6 +12,8 @@ public interface EmployeeService {
     Employee getEmployee(UUID employeeId);
 
     Iterable<Employee> getEmployees();
+
+    Iterable<Employee> queryEmployees(EmployeeQuery query);
 
     Employee createEmployee(EmployeeDefinition employeeDefinition);
 

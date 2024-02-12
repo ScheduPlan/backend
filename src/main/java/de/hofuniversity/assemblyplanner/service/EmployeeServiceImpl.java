@@ -3,7 +3,9 @@ package de.hofuniversity.assemblyplanner.service;
 import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.*;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeDefinition;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeQuery;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.specification.EmployeeSpecification;
 import de.hofuniversity.assemblyplanner.persistence.repository.AddressRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.EmployeeRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
@@ -53,6 +55,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Iterable<Employee> getEmployees() {
         return employeeRepository.findAll();
+    }
+
+    @Override
+    public Iterable<Employee> queryEmployees(EmployeeQuery query) {
+        return query == null ? employeeRepository.findAll() : employeeRepository.findAll(new EmployeeSpecification(query));
     }
 
     @Override
