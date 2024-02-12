@@ -1,7 +1,6 @@
 package de.hofuniversity.assemblyplanner.web;
 
 import de.hofuniversity.assemblyplanner.service.UserService;
-import de.hofuniversity.assemblyplanner.service.api.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
