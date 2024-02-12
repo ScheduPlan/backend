@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -285,9 +286,7 @@ public class EventPersistenceTest {
 
         eventRepository.save(event);
 
-        for(var e : overlaps) {
-            eventRepository.save(e);
-        }
+        eventRepository.saveAll(Arrays.asList(overlaps));
 
         assertThat(eventRepository.findOverlappingEvents(event))
                 .hasSize(overlaps.length)
