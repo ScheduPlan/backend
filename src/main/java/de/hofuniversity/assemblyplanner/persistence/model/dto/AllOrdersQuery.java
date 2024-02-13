@@ -10,6 +10,7 @@ public record AllOrdersQuery(
         String companyName,
         String customerNumber,
         UUID customerId,
+        UUID teamId,
         OrderState[] states,
         String description
 ) { }

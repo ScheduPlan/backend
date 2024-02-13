@@ -1,14 +1,18 @@
 package de.hofuniversity.assemblyplanner.persistence;
 
+import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.Customer;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.OrderState;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.AllOrdersQuery;
+import de.hofuniversity.assemblyplanner.persistence.model.embedded.TeamDescription;
 import de.hofuniversity.assemblyplanner.persistence.model.specification.AllOrdersSpecification;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
+import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.util.JpaUtil;
 import net.datafaker.Faker;
+import net.datafaker.providers.base.Team;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +34,8 @@ public class OrderSpecificationTest {
     private CustomerRepository customerRepository;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private TeamRepository teamRepository;
     @Autowired
     private TestEntityManager entityManager;
 
@@ -46,6 +53,12 @@ public class OrderSpecificationTest {
                 faker.phoneNumber().phoneNumber()
         );
 
+        AssemblyTeam team = new AssemblyTeam(new TeamDescription(faker.team().name(), faker.text().text()), List.of(), List.of());
+        teamRepository.save(team);
+
+        JpaUtil.reset(entityManager);
+        team = teamRepository.findById(team.getId()).orElseThrow();
+
         customer = customerRepository.save(customer);
 
         orderRepository.save(new Order(
@@ -56,7 +69,7 @@ public class OrderSpecificationTest {
                 OrderState.PLANNED,
                 customer,
                 Set.of(),
-                null,
+                team,
                 3.0,
                 null
         ));
@@ -69,7 +82,7 @@ public class OrderSpecificationTest {
                 OrderState.PLANNED,
                 customer,
                 Set.of(),
-                null,
+                team,
                 3.0,
                 null
         ));
@@ -93,6 +106,7 @@ public class OrderSpecificationTest {
                         null,
                         null,
                         null,
+                        null,
                         null
                 )
         ), Sort.by("customer_company"));
@@ -104,6 +118,7 @@ public class OrderSpecificationTest {
         List<Order> orders = orderRepository.findAll(new AllOrdersSpecification(
                 new AllOrdersQuery(
                         "A",
+                        null,
                         null,
                         null,
                         null,
@@ -125,9 +140,27 @@ public class OrderSpecificationTest {
                         null,
                         null,
                         null,
+                        null,
                         null
                 )
         ));
         assertThat(orders).size().isEqualTo(1);
+    }
+
+    @Test
+    public void shouldFindByOrderByTeam() {
+        List<Order> orders = orderRepository.findAll(new AllOrdersSpecification(
+                new AllOrdersQuery(
+                        null,
+                    null,
+                        null,
+                        null,
+                        null,
+                        teamRepository.findAll().iterator().next().getId(),
+                        null,
+                        null
+                )
+        ));
+        assertThat(orders).size().isEqualTo(2);
     }
 }
