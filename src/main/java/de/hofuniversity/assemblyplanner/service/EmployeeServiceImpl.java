@@ -12,6 +12,8 @@ import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.service.api.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,6 +31,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final AddressRepository addressRepository;
     private final TeamRepository teamRepository;
     private final UserService userService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
     public EmployeeServiceImpl(
             EmployeeRepository employeeRepository,
@@ -49,32 +52,40 @@ public class EmployeeServiceImpl implements EmployeeService {
     })
     @ResponseStatus(HttpStatus.OK)
     public Employee getEmployee(UUID employeeId) {
+        LOGGER.debug("retrieving employee {}", employeeId);
         return employeeRepository.findById(employeeId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
     public Iterable<Employee> getEmployees() {
+        LOGGER.info("retrieving all employees");
         return employeeRepository.findAll();
     }
 
     @Override
     public Iterable<Employee> queryEmployees(EmployeeQuery query) {
+        LOGGER.info("employees are being queried using query {}", query);
         return query == null ? employeeRepository.findAll() : employeeRepository.findAll(new EmployeeSpecification(query));
     }
 
     @Override
     public Employee createEmployee(EmployeeDefinition employeeDefinition) {
         User currentUser = userService.getCurrentUser().getUser();
+        LOGGER.info("creating employee using employee definition {}", employeeDefinition);
         if(!currentUser.isSuperiorTo(employeeDefinition.userDefinition().role())
-                || (employeeDefinition.userDefinition().role() == Role.ADMINISTRATOR && !currentUser.hasRole(Role.ADMINISTRATOR)))
+                || (employeeDefinition.userDefinition().role() == Role.ADMINISTRATOR && !currentUser.hasRole(Role.ADMINISTRATOR))) {
+            LOGGER.error("tried to create user {} as {}. Insufficient permissions.", employeeDefinition, currentUser);
             throw new AccessDeniedException("the current user is not allowed to create new users");
+        }
 
         User user = userService.createUser(employeeDefinition.userDefinition());
 
         AssemblyTeam team = null;
         if(employeeDefinition.teamId() != null) {
-            if(user.hasRole(Role.MANAGER))
+            if(user.hasRole(Role.MANAGER)) {
+                LOGGER.error("Tried to add {} to a team. Denying request.", employeeDefinition);
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
+            }
 
             team = teamRepository
                     .findById(employeeDefinition.teamId())
@@ -92,6 +103,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 null
         );
 
+        LOGGER.info("employee created using definition {}", employeeDefinition);
+
         return employeeRepository.save(employee);
     }
 
@@ -100,7 +113,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(ResourceNotFoundException::new);
         Employee currentUser = userService.getCurrentUser();
 
+        LOGGER.info("updating user {} using patch {}", employeeId, patchRequest);
+
         if(!(employee.equals(currentUser) || currentUser.getUser().isSuperiorTo(employee.getUser()))) {
+            LOGGER.error("current user is not allowed to modify user {}.", employeeId);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you are not allowed to change this user's data");
         }
 
@@ -114,8 +130,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         if(patchRequest.teamId() != null){
-            if(employee.getUser().hasRole(Role.MANAGER))
+            if(employee.getUser().hasRole(Role.MANAGER)) {
+                LOGGER.error("conflict trying to add user {} of type MANAGER to a team", employeeId);
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
+            }
 
             AssemblyTeam team = teamRepository.findById(patchRequest.teamId())
                     .orElseThrow(() -> new ResourceNotFoundException("team not found"));
@@ -141,7 +159,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             Person.assign(patchRequest.person(), employee, true);
         }
 
-        employeeRepository.save(employee);
+        employee = employeeRepository.save(employee);
+        LOGGER.info("successfully saved employee {}", employeeId);
         return employee;
     }
 
@@ -151,12 +170,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee currentUser = userService.getCurrentUser();
 
         if(!(employee.equals(currentUser) || currentUser.getUser().isSuperiorTo(employee.getUser()))) {
+            LOGGER.error("current user is not allowed to modify user {}", employeeId);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you are not allowed to change this user's data");
         }
 
         if(putRequest.teamId() != null) {
-            if (employee.getUser().hasRole(Role.MANAGER))
+            if (employee.getUser().hasRole(Role.MANAGER)) {
+                LOGGER.error("conflict trying to add user {} of type MANAGER to a team", employeeId);
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "only users with role FITTER may be added to a team.");
+            }
 
             AssemblyTeam team = teamRepository
                     .findById(putRequest.teamId())
@@ -167,9 +189,14 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.setTeam(null);
         }
 
+        LOGGER.info("modifying user {} using update request {}", employeeId, putRequest);
+
         BeanUtils.copyProperties(putRequest, employee, "user", "person");
+        LOGGER.debug("assigned {} to employee {}", putRequest, employeeId);
         BeanUtils.copyProperties(putRequest.user(), employee.getUser());
+        LOGGER.debug("assigned {} to employee {}", putRequest.user(), employeeId);
         BeanUtils.copyProperties(putRequest.person(), employee);
+        LOGGER.debug("assigned {} to employee {}", putRequest.person(), employeeId);
         employeeRepository.save(employee);
         return employee;
     }
@@ -188,10 +215,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteUser(UUID userId) {
+        LOGGER.info("deleting employee {}", userId);
         Employee employee = employeeRepository.findById(userId).orElseThrow(ResourceNotFoundException::new);
         try {
             userService.deleteUser(employee);
+            LOGGER.info("successfully deleted user {}", userId);
         } catch (InsufficientAuthenticationException ex) {
+            LOGGER.error("current user is not allowed to delete user {}, throwing exception.", userId, ex);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, ex.getMessage());
         }
     }
