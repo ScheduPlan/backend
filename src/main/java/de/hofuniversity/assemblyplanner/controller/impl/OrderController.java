@@ -28,7 +28,6 @@ public class OrderController {
             "or all orders if no restrictions were defined.")
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Order> getOrders(
-            @RequestParam(required = false, name = "customer") UUID customerId,
             @ParameterObject @ModelAttribute AllOrdersQuery orderQuery,
             @RequestParam(required = false, name = "sortedBy")
             @Parameter(description = "describes how to sort the values. Field order is important." +
