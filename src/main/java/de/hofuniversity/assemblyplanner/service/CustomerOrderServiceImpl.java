@@ -5,20 +5,20 @@ import de.hofuniversity.assemblyplanner.persistence.model.AssemblyTeam;
 import de.hofuniversity.assemblyplanner.persistence.model.Customer;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.OrderState;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderCreateRequest;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderQuery;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderUpdateRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.*;
 import de.hofuniversity.assemblyplanner.persistence.model.notification.OrderNotification;
 import de.hofuniversity.assemblyplanner.persistence.model.notification.OrderNotificationPayload;
-import de.hofuniversity.assemblyplanner.persistence.model.specification.OrderSpecification;
+import de.hofuniversity.assemblyplanner.persistence.model.specification.AllOrdersSpecification;
+import de.hofuniversity.assemblyplanner.persistence.model.specification.RestrictedOrderSpecification;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.service.api.CustomerOrderService;
 import de.hofuniversity.assemblyplanner.service.api.NotificationService;
+import org.hibernate.boot.model.source.spi.Sortable;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +47,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public Iterable<Order> getOrders(UUID customerId, OrderQuery query) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
-        return orderRepository.findAll(new OrderSpecification(query, customerId));
+        return orderRepository.findAll(new RestrictedOrderSpecification(query, customerId));
     }
 
     @Override
@@ -158,7 +158,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public Iterable<Order> findOrders(OrderQuery query, UUID owner) {
-        return orderRepository.findAll(new OrderSpecification(query, owner));
+        return orderRepository.findAll(new RestrictedOrderSpecification(query, owner));
+    }
+
+    @Override
+    public Iterable<Order> findOrders(AllOrdersQuery query, String... order) {
+        Sort sort = null;
+        for (var o : order)
+            sort = Sort.by(o);
+
+        var spec = new AllOrdersSpecification(query);
+        return sort == null ? orderRepository.findAll(spec) : orderRepository.findAll(spec, sort);
     }
 
     @Override

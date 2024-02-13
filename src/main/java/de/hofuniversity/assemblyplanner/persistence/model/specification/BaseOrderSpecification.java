@@ -2,40 +2,44 @@ package de.hofuniversity.assemblyplanner.persistence.model.specification;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class OrderSpecification implements Specification<Order> {
+public class BaseOrderSpecification implements Specification<Order> {
 
-    private final OrderQuery orderQuery;
-    private final UUID customerId;
+    protected final OrderQuery orderQuery;
 
-    public OrderSpecification(OrderQuery orderQuery, UUID customerId) {
-        this.orderQuery = orderQuery;
-        this.customerId = customerId;
+    public BaseOrderSpecification(OrderQuery query) {
+        this.orderQuery = query;
+    }
+
+    private Path<?> getActualRoot(Path<?> root, String field) {
+        if(field == null || field.isBlank())
+            return root;
+
+        int i = field.indexOf('.');
+        if(i == -1)
+            return root;
+
+        root = root.get(field.substring(0, i));
+
+        return getActualRoot(root, field.substring(i + 1));
     }
 
     @Override
     public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
-
         if(orderQuery.number() != null)
             predicates.add(criteriaBuilder.equal(root.get("number"), orderQuery.number()));
         if(orderQuery.commissionNumber() != null)
-            predicates.add(criteriaBuilder.equal(root.get("commissionNumber"), orderQuery.commissionNumber()));
+            predicates.add(criteriaBuilder.like(root.get("commissionNumber"),"%" + orderQuery.commissionNumber() + "%"));
         if(orderQuery.description() != null)
-            predicates.add(criteriaBuilder.like(root.get("description"), orderQuery.description()));
+            predicates.add(criteriaBuilder.like(root.get("description"), "%" + orderQuery.description() + "%"));
         if(orderQuery.states() != null && orderQuery.states().length > 0)
             predicates.add(root.get("state").in((Object[]) orderQuery.states()));
-        if(customerId != null)
-            predicates.add(criteriaBuilder.equal(root.get("customer.id"), customerId));
 
         return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
     }

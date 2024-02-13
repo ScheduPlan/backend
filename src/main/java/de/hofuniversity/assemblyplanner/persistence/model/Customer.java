@@ -115,7 +115,6 @@ public class Customer extends Person {
                 "company='" + company + '\'' +
                 ", customerNumber=" + customerNumber +
                 ", addresses=" + addresses +
-                ", orders=" + orders +
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", firstName='" + firstName + '\'' +

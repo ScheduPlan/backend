@@ -1,10 +1,7 @@
 package de.hofuniversity.assemblyplanner.service.api;
 
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderCreateRequest;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderListItem;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderQuery;
-import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderUpdateRequest;
+import de.hofuniversity.assemblyplanner.persistence.model.dto.*;
 
 import java.util.Set;
 import java.util.UUID;
@@ -25,6 +22,8 @@ public interface CustomerOrderService {
     Iterable<Order> findOrders(OrderQuery orderQuery);
 
     Iterable<Order> findOrders(OrderQuery query, UUID owner);
+
+    Iterable<Order> findOrders(AllOrdersQuery query, String... order);
 
     Set<OrderListItem> getOrdersByTeam(UUID teamId);
 }
