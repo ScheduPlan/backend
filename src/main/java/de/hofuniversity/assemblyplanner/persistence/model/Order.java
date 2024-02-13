@@ -15,6 +15,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(unique = true)
     private Integer number;
     private String description;
     private String commissionNumber;
