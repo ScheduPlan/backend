@@ -17,4 +17,12 @@ public record UserDefinition (
     public UserDefinition(String email, String username, String password) {
         this(email, username, password, Role.FITTER);
     }
+
+    @Override
+    public String toString() {
+        return "UserDefinition{" +
+                "username='" + username + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }
