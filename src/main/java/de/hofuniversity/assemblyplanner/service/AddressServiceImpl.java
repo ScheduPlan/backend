@@ -9,6 +9,8 @@ import de.hofuniversity.assemblyplanner.persistence.model.specification.AddressS
 import de.hofuniversity.assemblyplanner.persistence.repository.AddressRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import de.hofuniversity.assemblyplanner.service.api.AddressService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
     private final CustomerRepository customerRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AddressServiceImpl.class);
 
     public AddressServiceImpl(@Autowired AddressRepository addressRepository, @Autowired CustomerRepository customerRepository) {
         this.addressRepository = addressRepository;
@@ -44,6 +47,8 @@ public class AddressServiceImpl implements AddressService {
                 .findById(customerId)
                 .orElseThrow(ResourceNotFoundException::new);
 
+        LOGGER.info("creating address for request {}", createRequest);
+
         Address address = new Address(
                 createRequest.country(),
                 createRequest.street(),
@@ -57,6 +62,7 @@ public class AddressServiceImpl implements AddressService {
 
         customer.getAddresses().add(address);
         customerRepository.save(customer);
+        LOGGER.info("created address {}", address);
         return address;
     }
 
@@ -66,6 +72,7 @@ public class AddressServiceImpl implements AddressService {
                 .findAddressByCustomerId(customerId, addressId)
                 .orElseThrow(ResourceNotFoundException::new);
 
+        LOGGER.info("patching address {} using patch {}", addressId, createRequest);
         if(createRequest.country() != null)
             address.setCountry(createRequest.country());
         if(createRequest.city() != null)
@@ -84,6 +91,7 @@ public class AddressServiceImpl implements AddressService {
             address.setDescription(createRequest.description());
 
         addressRepository.save(address);
+        LOGGER.info("patched address {}", address);
         return address;
     }
 
@@ -93,19 +101,24 @@ public class AddressServiceImpl implements AddressService {
                 .findAddressByCustomerId(customerId, addressId)
                 .orElseThrow(ResourceNotFoundException::new);
 
+        LOGGER.info("updating address {} using update {}", address, createRequest);
+
         BeanUtils.copyProperties(createRequest, address);
 
         addressRepository.save(address);
+        LOGGER.info("updated address {}", address);
         return address;
     }
 
     @Override
     public Address deleteAddress(UUID customerId, UUID addressId) {
+        LOGGER.info("deleting address {}", addressId);
         Address address = addressRepository
                 .findAddressByCustomerId(customerId, addressId)
                 .orElseThrow(ResourceNotFoundException::new);
 
         addressRepository.delete(address);
+        LOGGER.info("deleted address {}", addressId);
         return address;
     }
 }
