@@ -36,7 +36,7 @@ public class Order {
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private AssemblyTeam team;
 
-    public Order(Integer number, String description, String commissionNumber, Double weight, OrderState state, Customer customer, Set<Event> events, AssemblyTeam team, Double plannedDuration) {
+    public Order(Integer number, String description, String commissionNumber, Double weight, OrderState state, Customer customer, Set<Event> events, AssemblyTeam team, Double plannedDuration, Date plannedExecutionDate) {
         this.number = number;
         this.description = description;
         this.commissionNumber = commissionNumber;
@@ -46,6 +46,7 @@ public class Order {
         this.events = events;
         this.team = team;
         this.plannedDuration = plannedDuration;
+        this.plannedExecutionDate = plannedExecutionDate;
     }
 
     public Order() {
@@ -134,6 +135,14 @@ public class Order {
 
     public void setPlannedDuration(Double plannedDuration) {
         this.plannedDuration = plannedDuration;
+    }
+
+    public Date getPlannedExecutionDate() {
+        return plannedExecutionDate;
+    }
+
+    public void setPlannedExecutionDate(Date plannedExecutionDate) {
+        this.plannedExecutionDate = plannedExecutionDate;
     }
 
     @Override

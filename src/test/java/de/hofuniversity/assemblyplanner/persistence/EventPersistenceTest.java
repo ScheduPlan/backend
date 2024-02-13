@@ -187,7 +187,7 @@ public class EventPersistenceTest {
 
     @Test
     public void shouldFindOverlapsOnOverlappingEventNullOrder() {
-        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), null, null);
+        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), null, null, null);
         orderRepository.save(firstOrder);
 
         Event event = createTestEvent(
@@ -211,7 +211,7 @@ public class EventPersistenceTest {
 
     @Test
     public void shouldFindOverlapsOnParentEventNullOrder() {
-        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), null, null);
+        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), null, null, null);
         orderRepository.save(firstOrder);
 
         Event event = createTestEvent(
@@ -238,8 +238,8 @@ public class EventPersistenceTest {
         AssemblyTeam team = new AssemblyTeam(new TeamDescription("test", "test"), List.of(), null);
         teamRepository.save(team);
 
-        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), team, null);
-        Order secondOrder = new Order(456, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), team, null);
+        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), team, null, null);
+        Order secondOrder = new Order(456, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), team, null, null);
         firstOrder = orderRepository.save(firstOrder);
         secondOrder = orderRepository.save(secondOrder);
 

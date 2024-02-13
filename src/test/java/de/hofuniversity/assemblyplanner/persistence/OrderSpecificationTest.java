@@ -57,7 +57,8 @@ public class OrderSpecificationTest {
                 customer,
                 Set.of(),
                 null,
-                3.0
+                3.0,
+                null
         ));
 
         orderRepository.save(new Order(
@@ -69,7 +70,8 @@ public class OrderSpecificationTest {
                 customer,
                 Set.of(),
                 null,
-                3.0
+                3.0,
+                null
         ));
 
         JpaUtil.reset(entityManager);

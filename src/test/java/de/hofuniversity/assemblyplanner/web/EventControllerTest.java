@@ -76,6 +76,7 @@ public class EventControllerTest {
                 faker.text().text(),
                 faker.numerify("##ABC####"),
                 faker.number().randomDouble(1, 0, 10),
+                null,
                 faker.number().randomDouble(3, 1, 10),
                 null
         ));
@@ -104,6 +105,7 @@ public class EventControllerTest {
                 faker.text().text(),
                 faker.numerify("##ABC####"),
                 faker.number().randomDouble(1, 0, 10),
+                null,
                 faker.number().randomDouble(3, 1, 10),
                 null
         ));

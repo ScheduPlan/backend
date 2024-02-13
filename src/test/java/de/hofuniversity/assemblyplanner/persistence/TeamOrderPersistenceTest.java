@@ -38,6 +38,7 @@ public class TeamOrderPersistenceTest {
                         null,
                         null,
                         null,
+                        null,
                         null));
 
         AssemblyTeam t = teamRepository.save(

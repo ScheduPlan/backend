@@ -16,6 +16,8 @@ import de.hofuniversity.assemblyplanner.persistence.repository.TeamRepository;
 import de.hofuniversity.assemblyplanner.service.api.CustomerOrderService;
 import de.hofuniversity.assemblyplanner.service.api.NotificationService;
 import org.hibernate.boot.model.source.spi.Sortable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -32,6 +34,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private final CustomerRepository customerRepository;
     private final TeamRepository teamRepository;
     private final NotificationService notificationService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerOrderServiceImpl.class);
 
     public CustomerOrderServiceImpl(
             @Autowired OrderRepository orderRepository,
@@ -76,7 +79,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customer,
                 null,
                 team,
-                orderRequest.plannedDuration());
+                orderRequest.plannedDuration(),
+                orderRequest.plannedExecutionDate());
 
         order = orderRepository.save(order);
 
@@ -112,6 +116,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if(updateRequest.plannedDuration() != null){
             order.setPlannedDuration(updateRequest.plannedDuration());
         }
+        if(updateRequest.plannedExecutionDate() != null)
+            order.setPlannedExecutionDate(updateRequest.plannedExecutionDate());
 
         sendNotification(OrderNotification.Type.UPDATED, order, customerId);
 
