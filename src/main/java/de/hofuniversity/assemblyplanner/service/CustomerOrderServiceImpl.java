@@ -50,11 +50,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public Iterable<Order> getOrders(UUID customerId, OrderQuery query) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
+        LOGGER.info("retrieving orders for customer {} using query {}", customerId, query);
         return orderRepository.findAll(new RestrictedOrderSpecification(query, customerId));
     }
 
     @Override
     public Order getOrder(UUID customerId, UUID orderId) {
+        LOGGER.info("retrieving order {} for customer {}", orderId, customerId);
         return orderRepository.findByCustomerId(customerId, orderId).orElseThrow(ResourceNotFoundException::new);
     }
 
@@ -65,6 +67,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 .findById(customerId)
                 .orElseThrow(ResourceNotFoundException::new);
 
+        LOGGER.info("creating order for customer {} using create request {}", customerId, orderRequest);
         AssemblyTeam team = null;
         if(orderRequest.teamId() != null)
             team = teamRepository
@@ -83,7 +86,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 orderRequest.plannedExecutionDate());
 
         order = orderRepository.save(order);
-
+        LOGGER.info("created order {}", order);
         if(team != null) {
             sendNotification(OrderNotification.Type.CREATED, order, customerId);
         }
@@ -96,7 +99,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         Order order = orderRepository
                 .findByCustomerId(customerId, orderId)
                 .orElseThrow(ResourceNotFoundException::new);
-
+        LOGGER.info("updating order for customer {} using patch request {}", customerId, updateRequest);
         if(updateRequest.commissionNumber() != null)
             order.setCommissionNumber(updateRequest.commissionNumber());
         if(updateRequest.number() != null)
@@ -129,7 +132,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         Order order = orderRepository
                 .findByCustomerId(customerId, orderId)
                 .orElseThrow(ResourceNotFoundException::new);
-
+        LOGGER.info("updating order for customer {} using update request {}", customerId, updateRequest);
         BeanUtils.copyProperties(updateRequest, order, "teamId");
 
         AssemblyTeam team = null;
@@ -147,6 +150,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public Order deleteOrder(UUID customerId, UUID orderId) {
+        LOGGER.info("deleting order {}", orderId);
         Order order = orderRepository
                 .findByCustomerId(customerId, orderId)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -154,6 +158,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         order.getProducts().clear();
 
         orderRepository.delete(order);
+        LOGGER.info("deleted order {}", orderId);
         return order;
     }
 

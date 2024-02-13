@@ -8,6 +8,8 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.CustomerRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.specification.CustomerSpecification;
 import de.hofuniversity.assemblyplanner.persistence.repository.CustomerRepository;
 import de.hofuniversity.assemblyplanner.service.api.CustomerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.UUID;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
     public CustomerServiceImpl(@Autowired CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
@@ -45,6 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerRequest.person().lastName(),
                 customerRequest.email(),
                 customerRequest.phoneNumber());
+        LOGGER.info("creating new customer {}", customerRequest.person());
         return customerRepository.save(customer);
     }
 
@@ -63,7 +67,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setEmail(patchRequest.email());
 
         Person.assign(patchRequest.person(), customer, true);
-
+        LOGGER.info("updating customer {} using patch", customerId);
         return customerRepository.save(customer);
     }
 
@@ -72,6 +76,7 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
         BeanUtils.copyProperties(putRequest, customer);
         Person.assign(putRequest.person(), customer, false);
+        LOGGER.info("updating customer {} using update", customerId);
         return customerRepository.save(customer);
     }
 
@@ -79,6 +84,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer deleteCustomer(UUID customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(ResourceNotFoundException::new);
         customerRepository.delete(customer);
+        LOGGER.info("deleted customer {}", customerId);
         return customer;
     }
 }

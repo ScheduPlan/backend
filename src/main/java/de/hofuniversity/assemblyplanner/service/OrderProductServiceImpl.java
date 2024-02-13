@@ -6,6 +6,8 @@ import de.hofuniversity.assemblyplanner.persistence.model.Product;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductAppendRequest;
 import de.hofuniversity.assemblyplanner.persistence.repository.OrderRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import java.util.UUID;
 public class OrderProductServiceImpl implements de.hofuniversity.assemblyplanner.service.api.OrderProductService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderProductServiceImpl.class);
 
     public OrderProductServiceImpl(@Autowired OrderRepository orderRepository, @Autowired ProductRepository productRepository) {
         this.orderRepository = orderRepository;
@@ -36,6 +39,8 @@ public class OrderProductServiceImpl implements de.hofuniversity.assemblyplanner
             throw new ResourceNotFoundException("at least one of the given products was not found");
         }
 
+        LOGGER.info("adding product to order {} using request {}", orderId, request);
+
         for(var product : products) {
             order.getProducts().add(product);
         }
@@ -51,6 +56,7 @@ public class OrderProductServiceImpl implements de.hofuniversity.assemblyplanner
                 .findFirst()
                 .orElseThrow(ResourceNotFoundException::new);
 
+        LOGGER.info("removing product {} from order {}", productId, orderId);
         order.getProducts().remove(product);
         return orderRepository.save(order);
     }

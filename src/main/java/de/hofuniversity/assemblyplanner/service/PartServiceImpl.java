@@ -5,6 +5,8 @@ import de.hofuniversity.assemblyplanner.persistence.model.Part;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourceRequest;
 import de.hofuniversity.assemblyplanner.persistence.model.embedded.Description;
 import de.hofuniversity.assemblyplanner.persistence.repository.PartRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.UUID;
 public class PartServiceImpl implements de.hofuniversity.assemblyplanner.service.api.PartService {
 
     private final PartRepository partRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PartServiceImpl.class);
 
     public PartServiceImpl(@Autowired PartRepository partRepository) {
         this.partRepository = partRepository;
@@ -27,6 +30,7 @@ public class PartServiceImpl implements de.hofuniversity.assemblyplanner.service
 
     @Override
     public Part getPart(UUID partId) {
+        LOGGER.info("retrieving part {}", partId);
         return partRepository.findById(partId)
                 .orElseThrow(ResourceNotFoundException::new);
     }
@@ -39,6 +43,8 @@ public class PartServiceImpl implements de.hofuniversity.assemblyplanner.service
                 ),
                 null
         );
+
+        LOGGER.info("creating part from create request {}", partCreateRequest);
 
         return partRepository.save(part);
     }
@@ -53,6 +59,8 @@ public class PartServiceImpl implements de.hofuniversity.assemblyplanner.service
         if(partCreateRequest.description() != null)
             part.getDescription().setDescription(partCreateRequest.description());
 
+        LOGGER.info("updating part {} using patch {}", partId, partCreateRequest);
+
         return partRepository.save(part);
     }
 
@@ -63,15 +71,19 @@ public class PartServiceImpl implements de.hofuniversity.assemblyplanner.service
 
         BeanUtils.copyProperties(partCreateRequest, part);
 
+        LOGGER.info("updating part {} using update {}", partId, partCreateRequest);
+
         return partRepository.save(part);
     }
 
     @Override
     public Part deletePart(UUID partId) {
+        LOGGER.info("deleting part {}", partId);
         Part part = partRepository.findById(partId)
                 .orElseThrow(ResourceNotFoundException::new);
 
         partRepository.delete(part);
+        LOGGER.info("deleted part {}", partId);
         return part;
     }
 }

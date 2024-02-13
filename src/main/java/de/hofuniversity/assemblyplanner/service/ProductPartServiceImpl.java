@@ -8,6 +8,8 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductPartAppendR
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductPartUpdateRequest;
 import de.hofuniversity.assemblyplanner.persistence.repository.PartRepository;
 import de.hofuniversity.assemblyplanner.persistence.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ public class ProductPartServiceImpl implements de.hofuniversity.assemblyplanner.
 
     private final PartRepository partRepository;
     private final ProductRepository productRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PartServiceImpl.class);
 
     public ProductPartServiceImpl(@Autowired PartRepository partRepository,
                                   @Autowired ProductRepository productRepository) {
@@ -32,6 +35,7 @@ public class ProductPartServiceImpl implements de.hofuniversity.assemblyplanner.
 
     @Override
     public Part getPart(UUID productId, UUID partId) {
+        LOGGER.info("retrieving part {} for product {}", partId, productId);
         return partRepository
                 .findPartByProductId(productId, partId)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -42,6 +46,9 @@ public class ProductPartServiceImpl implements de.hofuniversity.assemblyplanner.
         Product product = productRepository.findById(productId).orElseThrow(ResourceNotFoundException::new);
         Part part = partRepository.findById(appendRequest.partId()).orElseThrow(ResourceNotFoundException::new);
         product.addPart(part, appendRequest.amount());
+
+        LOGGER.info("adding {} parts of type {} to product {}", appendRequest.amount(), appendRequest.partId(), productId);
+
         partRepository.save(part);
         return productRepository.save(product);
     }
@@ -53,6 +60,8 @@ public class ProductPartServiceImpl implements de.hofuniversity.assemblyplanner.
         ProductPart association = product.removePart(part);
         partRepository.save(part);
         productRepository.save(product);
+
+        LOGGER.info("deleted part {} on product {}", partId, productId);
         return association;
     }
 
@@ -65,6 +74,8 @@ public class ProductPartServiceImpl implements de.hofuniversity.assemblyplanner.
                 .filter(pp -> pp.getProduct().getId().equals(productId))
                 .findAny()
                 .orElseThrow(ResourceNotFoundException::new);
+
+        LOGGER.info("updating amount of part {} on product {} to {}", partId, productId, updateRequest.amount());
 
         productPart.setAmount(updateRequest.amount());
         partRepository.save(part);
