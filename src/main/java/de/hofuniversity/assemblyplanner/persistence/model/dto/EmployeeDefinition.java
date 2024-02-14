@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record EmployeeDefinition(
-        @JsonUnwrapped PersonRequest person,
+        PersonRequest person,
         @Valid UserDefinition userDefinition,
         @Min(100000)
         Integer employeeNumber,
