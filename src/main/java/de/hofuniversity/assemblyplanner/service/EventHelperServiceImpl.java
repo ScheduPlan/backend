@@ -62,6 +62,7 @@ public class EventHelperServiceImpl implements de.hofuniversity.assemblyplanner.
                 .orElseThrow(ResourceNotFoundException::new);
 
         addHelper(event, helper);
+        event = eventRepository.save(event);
 
         return event.getHelpers()
                 .stream()
@@ -78,6 +79,7 @@ public class EventHelperServiceImpl implements de.hofuniversity.assemblyplanner.
                 .orElseThrow(ResourceNotFoundException::new);
 
         removeHelper(event, helper);
+        event = eventRepository.save(event);
 
         return event.getHelpers()
                 .stream()
