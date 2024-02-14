@@ -46,6 +46,7 @@ public class UserPersistenceTest {
 
         User user = userService.createUser(def);
         Employee employee = new Employee("admin", "admin", 1, null, null, null, user, Set.of());
+        employee = employeeRepository.save(employee);
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
@@ -64,6 +65,7 @@ public class UserPersistenceTest {
 
         User user = userService.createUser(currentUser, true);
         Employee employee = new Employee("manager", "manager", 1, null, null, null, user, Set.of());
+        employee = employeeRepository.save(employee);
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
@@ -74,7 +76,7 @@ public class UserPersistenceTest {
         assertThatCode(() -> userService.deleteUser(savedEmployee)).doesNotThrowAnyException();
         JpaUtil.reset(em);
 
-        assertThat(employeeRepository.count()).isZero();
+        assertThat(employeeRepository.count()).isEqualTo(1);
     }
 
     @Test
@@ -85,6 +87,7 @@ public class UserPersistenceTest {
 
         User user = userService.createUser(currentUser, true);
         Employee employee = new Employee("admin", "admin", 1, null, null, null, user, Set.of());
+        employee = employeeRepository.save(employee);
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
@@ -95,7 +98,7 @@ public class UserPersistenceTest {
         assertThatCode(() -> userService.deleteUser(savedEmployee)).doesNotThrowAnyException();
         JpaUtil.reset(em);
 
-        assertThat(employeeRepository.count()).isZero();
+        assertThat(employeeRepository.count()).isEqualTo(1);
     }
 
     @Test
@@ -106,6 +109,7 @@ public class UserPersistenceTest {
 
         User user = userService.createUser(currentUser, true);
         Employee employee = new Employee("user", "user", 1, null, null, null, user, Set.of());
+        employee = employeeRepository.save(employee);
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
@@ -119,7 +123,7 @@ public class UserPersistenceTest {
 
         JpaUtil.reset(em);
 
-        assertThat(employeeRepository.count()).isEqualTo(1);
+        assertThat(employeeRepository.count()).isEqualTo(2);
     }
 
     @Test
@@ -130,6 +134,7 @@ public class UserPersistenceTest {
 
         User user = userService.createUser(currentUser, true);
         Employee employee = new Employee("user", "user", 1, null, null, null, user, Set.of());
+        employee = employeeRepository.save(employee);
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(new EmployeeUserDetailsAdapter(employee), ""));
 
@@ -143,6 +148,6 @@ public class UserPersistenceTest {
 
         JpaUtil.reset(em);
 
-        assertThat(employeeRepository.count()).isEqualTo(1);
+        assertThat(employeeRepository.count()).isEqualTo(2);
     }
 }
