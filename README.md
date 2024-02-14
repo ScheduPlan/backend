@@ -72,3 +72,8 @@ Der Refresh-Token kann genutzt werden, um in einem bestimmten Zeitraum nach dem 
 Hierzu kann der Endpunkt `/auth/refresh` genutzt werden. Der Refresh-Token wird übermittelt. 
 Als Response erhält der Nutzer die Nutzer-ID, für den der Refresh-Token erstellt wurde, als auch einen neuen Access-Token.
 
+## Voraussetzungen
+
+Die Voraussetzungen für die Verwendung des Backends sind:
+- Java 17+ (Tests durchgeführt unter Java 21)
+- Maven (Tests durchgeführt unter Maven 3.9.5)
