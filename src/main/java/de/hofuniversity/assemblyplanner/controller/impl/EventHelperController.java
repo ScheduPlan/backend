@@ -5,6 +5,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.ResourceRequest;
 import de.hofuniversity.assemblyplanner.service.api.EventHelperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -57,6 +58,7 @@ public class EventHelperController {
             @ApiResponse(responseCode = "404", description = "the event, order, helper or customer was not found")
     })
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Set<Helper> addHelper(
             @PathVariable UUID customerId,
             @PathVariable UUID orderId,
@@ -71,6 +73,7 @@ public class EventHelperController {
             @ApiResponse(responseCode = "404", description = "the customer, order, event or helper was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Set<Helper> removeHelper(
             @PathVariable UUID customerId,
             @PathVariable UUID orderId,

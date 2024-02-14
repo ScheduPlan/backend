@@ -7,6 +7,7 @@ import de.hofuniversity.assemblyplanner.service.api.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,7 @@ public class ProductController {
     @PostMapping
     @Operation(summary = "creates a new product")
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Product createProduct(@RequestBody @Valid ProductCreateRequest createRequest) {
         return productService.createProduct(createRequest);
     }
@@ -54,6 +56,7 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "the product was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Product patchProduct(@PathVariable UUID productId, @RequestBody ProductUpdateRequest updateRequest) {
         return productService.patchProduct(productId, updateRequest);
     }
@@ -63,6 +66,7 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "the product was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Product putProduct(@PathVariable UUID productId, @RequestBody ProductUpdateRequest updateRequest) {
         return productService.putProduct(productId, updateRequest);
     }
@@ -72,6 +76,7 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "the product was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Product deleteProduct(@PathVariable UUID productId) {
         return productService.deleteProduct(productId);
     }

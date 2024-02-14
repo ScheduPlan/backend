@@ -8,6 +8,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.EmployeeUpdateRequ
 import de.hofuniversity.assemblyplanner.service.api.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "the employee was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public EmployeeDto patchEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeUpdateRequest patchRequest) {
         return new EmployeeDto(employeeService.patchEmployee(employeeId, patchRequest));
     }
@@ -62,6 +64,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "the employee was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public EmployeeDto putEmployee(@PathVariable UUID employeeId, @RequestBody @Valid EmployeeUpdateRequest putRequest) {
         return new EmployeeDto(employeeService.putEmployee(employeeId, putRequest));
     }
@@ -76,6 +79,7 @@ public class EmployeeController {
                     " to delete the specified user")
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public void deleteUser(@PathVariable UUID userId) {
         employeeService.deleteUser(userId);
     }

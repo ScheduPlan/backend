@@ -6,6 +6,7 @@ import de.hofuniversity.assemblyplanner.service.api.OrderProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("customer/{customerId}/orders/{orderId}/products")
+@RolesAllowed({"MANAGER", "ADMINISTRATOR"})
 public class OrderProductController {
 
     private final OrderProductService productService;

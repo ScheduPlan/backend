@@ -5,6 +5,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourc
 import de.hofuniversity.assemblyplanner.service.api.PartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,7 @@ public class PartController {
     @PostMapping
     @Operation(summary = "creates a part")
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Part createPart(@RequestBody @Valid DescribableResourceRequest partCreateRequest) {
         return partService.createPart(partCreateRequest);
     }
@@ -51,6 +53,7 @@ public class PartController {
             @ApiResponse(responseCode = "404", description = "the part wasn't found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Part patchPart(@PathVariable UUID partId, @RequestBody DescribableResourceRequest partCreateRequest) {
         return partService.patchPart(partId, partCreateRequest);
     }
@@ -60,6 +63,7 @@ public class PartController {
             @ApiResponse(responseCode = "404", description = "the part wasn't found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Part putPart(@PathVariable UUID partId, @RequestBody DescribableResourceRequest partCreateRequest) {
         return partService.putPart(partId, partCreateRequest);
     }
@@ -69,6 +73,7 @@ public class PartController {
             @ApiResponse(responseCode = "404", description = "the part wasn't found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Part deletePart(@PathVariable UUID partId) {
         return partService.deletePart(partId);
     }

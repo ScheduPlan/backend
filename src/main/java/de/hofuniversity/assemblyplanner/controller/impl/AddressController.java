@@ -6,6 +6,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.AddressQuery;
 import de.hofuniversity.assemblyplanner.service.api.AddressService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,7 @@ public class AddressController {
             @ApiResponse(responseCode = "404", description = "the customer wasn't found")
     })
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Address createAddress(@PathVariable UUID customerId, @RequestBody @Valid AddressCreateRequest createRequest) {
         return addressService.createAddress(customerId, createRequest);
     }
@@ -56,6 +58,7 @@ public class AddressController {
             @ApiResponse(responseCode = "404", description = "the address or customer wasn't found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Address patchAddress(@PathVariable UUID customerId, @PathVariable UUID addressId, @RequestBody AddressCreateRequest createRequest) {
         return addressService.patchAddress(customerId, addressId, createRequest);
     }
@@ -65,6 +68,7 @@ public class AddressController {
             @ApiResponse(responseCode = "404", description = "the address or customer wasn't found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Address putAddress(@PathVariable UUID customerId, @PathVariable UUID addressId, @RequestBody AddressCreateRequest createRequest) {
         return addressService.putAddress(customerId, addressId, createRequest);
     }
@@ -74,6 +78,7 @@ public class AddressController {
             @ApiResponse(responseCode = "404", description = "the address or customer wasn't found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Address deleteAddress(@PathVariable UUID customerId, @PathVariable UUID addressId) {
         return addressService.deleteAddress(customerId, addressId);
     }

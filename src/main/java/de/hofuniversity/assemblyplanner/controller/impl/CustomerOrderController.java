@@ -8,6 +8,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.OrderUpdateRequest
 import de.hofuniversity.assemblyplanner.service.api.CustomerOrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ public class CustomerOrderController {
             )
     })
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Order createOrder(@PathVariable UUID customerId, @RequestBody @Valid OrderCreateRequest orderRequest) {
         return orderService.createOrder(customerId, orderRequest);
     }
@@ -63,6 +65,7 @@ public class CustomerOrderController {
     @Operation(summary = "patches the specified order. NULL values are ignored.", responses = {
             @ApiResponse(responseCode = "404", description = "the order could not be found")
     })
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Order updateOrder(@PathVariable UUID customerId, @PathVariable UUID orderId, @RequestBody OrderUpdateRequest updateRequest) {
         return orderService.updateOrder(customerId, orderId, updateRequest);
     }
@@ -72,12 +75,14 @@ public class CustomerOrderController {
     @Operation(summary = "updates all fields of the specified order.", responses = {
             @ApiResponse(responseCode = "404", description = "the order could not be found")
     })
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Order putOrder(@PathVariable UUID customerId, @PathVariable UUID orderId, @RequestBody OrderUpdateRequest updateRequest) {
         return orderService.putOrder(customerId, orderId, updateRequest);
     }
 
     @DeleteMapping("/{orderId}")
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public OrderDeleteResponse deleteOrder(@PathVariable UUID customerId, @PathVariable UUID orderId) {
         return new OrderDeleteResponse(orderService.deleteOrder(customerId, orderId));
     }

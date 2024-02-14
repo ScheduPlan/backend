@@ -6,6 +6,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.CustomerRequest;
 import de.hofuniversity.assemblyplanner.service.api.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ public class CustomerController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "creates a customer")
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Customer createCustomer(@RequestBody @Valid CustomerRequest customerRequest) {
         return customerService.createCustomer(customerRequest);
     }
@@ -53,6 +55,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "the customer was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Customer patchCustomer(@PathVariable UUID customerId, @RequestBody @Valid CustomerRequest patchRequest) {
         return customerService.patchCustomer(customerId, patchRequest);
     }
@@ -62,6 +65,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "the customer was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Customer putCustomer(@PathVariable UUID customerId, @RequestBody CustomerRequest putRequest) {
         return customerService.putCustomer(customerId, putRequest);
     }
@@ -71,6 +75,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "the customer wasn't found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Customer deleteCustomer(@PathVariable UUID customerId) {
         return customerService.deleteCustomer(customerId);
     }

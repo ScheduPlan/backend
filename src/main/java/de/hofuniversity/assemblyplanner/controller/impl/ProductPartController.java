@@ -8,6 +8,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.ProductPartUpdateR
 import de.hofuniversity.assemblyplanner.service.api.ProductPartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,7 @@ public class ProductPartController {
             @ApiResponse(responseCode = "404", description = "the requested part or product was not found")
     })
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Product addPart(@PathVariable UUID productId, @RequestBody @Valid ProductPartAppendRequest appendRequest) {
         return productPartService.addPart(productId, appendRequest);
     }
@@ -56,6 +58,7 @@ public class ProductPartController {
                     "or the part is not associated to the product")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public ProductPart deletePart(@PathVariable UUID productId, @PathVariable UUID partId) {
         return productPartService.deletePart(productId, partId);
     }
@@ -66,6 +69,7 @@ public class ProductPartController {
                     "exists between the two.")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public ProductPart updateAmount(@PathVariable UUID productId,
                                     @PathVariable UUID partId,
                                     @RequestBody ProductPartUpdateRequest updateRequest) {

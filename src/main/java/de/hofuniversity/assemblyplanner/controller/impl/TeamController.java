@@ -9,6 +9,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.TeamDeleteResponse
 import de.hofuniversity.assemblyplanner.service.api.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,7 @@ public class TeamController {
     @PostMapping
     @Operation(summary = "creates a team")
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public AssemblyTeam createTeam(@RequestBody @Valid DescribableResourceRequest teamCreateRequest) {
         return teamService.createTeam(teamCreateRequest);
     }
@@ -55,6 +57,7 @@ public class TeamController {
             @ApiResponse(responseCode = "404", description = "the team was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public AssemblyTeam patchTeam(@PathVariable UUID teamId, @RequestBody DescribableResourceRequest patchTeamRequest) {
         return teamService.patchTeam(teamId, patchTeamRequest);
     }
@@ -64,6 +67,7 @@ public class TeamController {
             @ApiResponse(responseCode = "404", description = "the team was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public AssemblyTeam putTeam(@PathVariable UUID teamId, @RequestBody DescribableResourceRequest putTeamRequest) {
         return teamService.putTeam(teamId, putTeamRequest);
     }
@@ -73,6 +77,7 @@ public class TeamController {
             @ApiResponse(responseCode = "404", description = "the team was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public TeamDeleteResponse deleteTeam(@PathVariable UUID teamId) {
         return teamService.deleteTeam(teamId);
     }
