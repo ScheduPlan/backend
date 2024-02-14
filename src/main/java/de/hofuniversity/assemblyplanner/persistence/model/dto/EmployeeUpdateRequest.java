@@ -18,7 +18,7 @@ public record EmployeeUpdateRequest (
         @Valid UserUpdateRequest user
 ) {
         @JsonCreator
-        public EmployeeUpdateRequest(@NotNull String firstName, @NotNull String lastName, @Valid UserUpdateRequest userUpdateRequest, @Min(100000) Integer employeeNumber, String position, UUID teamId, UUID addressId){
-                this(employeeNumber, position, teamId, addressId, new PersonRequest(firstName, lastName), userUpdateRequest);
+        public EmployeeUpdateRequest(@NotNull String firstName, @NotNull String lastName, @Valid UserUpdateRequest user, @Min(100000) Integer employeeNumber, String position, UUID teamId, UUID addressId){
+                this(employeeNumber, position, teamId, addressId, new PersonRequest(firstName, lastName), user);
         }
 }
