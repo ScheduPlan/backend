@@ -1,5 +1,6 @@
 package de.hofuniversity.assemblyplanner.persistence.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 
@@ -11,6 +12,6 @@ public record EmployeeUpdateRequest (
         String position,
         UUID teamId,
         UUID addressId,
-        @Valid PersonRequest person,
+        @Valid @JsonUnwrapped PersonRequest person,
         @Valid UserUpdateRequest user
 ) { }
