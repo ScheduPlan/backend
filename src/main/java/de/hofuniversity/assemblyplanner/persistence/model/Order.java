@@ -150,12 +150,12 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return number.equals(order.number) && commissionNumber.equals(order.commissionNumber) && Double.compare(weight, order.weight) == 0 && Objects.equals(id, order.id) && Objects.equals(description, order.description) && state == order.state && Objects.equals(customer, order.customer) && Objects.equals(events, order.events) && Objects.equals(products, order.products);
+        return number.equals(order.number) && commissionNumber.equals(order.commissionNumber) && Double.compare(weight, order.weight) == 0 && Objects.equals(id, order.id) && Objects.equals(description, order.description) && state == order.state && Objects.equals(customer, order.customer) && Objects.equals(products, order.products);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, description, commissionNumber, weight, state, customer, events, products);
+        return Objects.hash(id, number, description, commissionNumber, weight, state, customer, products);
     }
 
     @Override
@@ -168,7 +168,6 @@ public class Order {
                 ", weight=" + weight +
                 ", state=" + state +
                 ", customer=" + customer +
-                ", events=" + events +
                 ", products=" + products +
                 '}';
     }

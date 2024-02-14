@@ -17,10 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,8 +62,6 @@ public class EventPersistenceTest {
 
         eventRepository.save(event);
         eventRepository.save(overlappingEvent);
-
-        var overlaps = eventRepository.findOverlappingEvents(event);
 
         assertThat(eventRepository.findOverlappingEvents(event))
                 .hasSize(1)
@@ -187,8 +182,8 @@ public class EventPersistenceTest {
 
     @Test
     public void shouldFindOverlapsOnOverlappingEventNullOrder() {
-        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), null, null, null);
-        orderRepository.save(firstOrder);
+        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, new HashSet<>(), null, null, null);
+        firstOrder = orderRepository.save(firstOrder);
 
         Event event = createTestEvent(
                 new Date(),
@@ -211,7 +206,7 @@ public class EventPersistenceTest {
 
     @Test
     public void shouldFindOverlapsOnParentEventNullOrder() {
-        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), null, null, null);
+        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, new HashSet<>(), null, null, null);
         orderRepository.save(firstOrder);
 
         Event event = createTestEvent(
@@ -238,8 +233,8 @@ public class EventPersistenceTest {
         AssemblyTeam team = new AssemblyTeam(new TeamDescription("test", "test"), List.of(), null);
         teamRepository.save(team);
 
-        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), team, null, null);
-        Order secondOrder = new Order(456, "", "123", 1.0, OrderState.PLANNED, null, Set.of(), team, null, null);
+        Order firstOrder = new Order(123, "", "123", 1.0, OrderState.PLANNED, null, new HashSet<>(), team, null, null);
+        Order secondOrder = new Order(456, "", "123", 1.0, OrderState.PLANNED, null, new HashSet<>(), team, null, null);
         firstOrder = orderRepository.save(firstOrder);
         secondOrder = orderRepository.save(secondOrder);
 

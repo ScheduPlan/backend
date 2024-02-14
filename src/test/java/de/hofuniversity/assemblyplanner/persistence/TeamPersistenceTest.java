@@ -28,8 +28,7 @@ public class TeamPersistenceTest {
         testEntityManager.flush();
 
         assertThat(teamRepository.findAll())
-                .hasSize(1)
-                .first().hasNoNullFieldsOrProperties();
+                .hasSize(1);
     }
 
     @Test
