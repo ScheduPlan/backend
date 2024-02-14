@@ -85,7 +85,7 @@ public class AddressServiceImpl implements AddressService {
             address.setZip(createRequest.zip());
         if(createRequest.street() != null)
             address.setStreet(createRequest.street());
-        if(createRequest.streetNumber() != 0)
+        if(createRequest.streetNumber() != null)
             address.setStreetNumber(createRequest.streetNumber());
         if(createRequest.description() != null)
             address.setDescription(createRequest.description());
