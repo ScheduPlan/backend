@@ -6,7 +6,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.DescribableResourc
 import java.util.UUID;
 
 public interface PartService {
-    Iterable<Part> getParts(UUID productId);
+    Iterable<Part> getParts();
 
     Part getPart(UUID partId);
 

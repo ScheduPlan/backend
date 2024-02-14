@@ -24,7 +24,7 @@ public class PartServiceImpl implements de.hofuniversity.assemblyplanner.service
     }
 
     @Override
-    public Iterable<Part> getParts(UUID productId) {
+    public Iterable<Part> getParts() {
         return partRepository.findAll();
     }
 

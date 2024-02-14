@@ -26,8 +26,8 @@ public class PartController {
     @GetMapping
     @Operation(summary = "gets all existing parts")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Part> getParts(@PathVariable UUID productId) {
-        return partService.getParts(productId);
+    public Iterable<Part> getParts() {
+        return partService.getParts();
     }
 
     @GetMapping("/{partId}")
