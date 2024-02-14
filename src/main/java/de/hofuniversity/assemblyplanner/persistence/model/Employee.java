@@ -18,7 +18,7 @@ public class Employee extends Person {
     @ManyToOne private AssemblyTeam team;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true) private Address address;
     @Embedded private User user;
-    @ManyToMany
+    @ManyToMany(mappedBy = "helpers")
     @JsonIgnore
     private Set<Event> helpsOn;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

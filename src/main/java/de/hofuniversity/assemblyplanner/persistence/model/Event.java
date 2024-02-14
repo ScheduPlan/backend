@@ -23,7 +23,7 @@ public class Event {
     private EventType type;
     @ManyToOne
     private Order order;
-    @ManyToMany
+    @ManyToMany(mappedBy = "helpsOn")
     private Set<Employee> helpers;
 
     public Event(Date startDate, Date endDate, Description description, Event parentEvent, EventType type, Order order, Set<Employee> helpers) {
