@@ -5,6 +5,7 @@ import de.hofuniversity.assemblyplanner.persistence.model.dto.EventCreateRequest
 import de.hofuniversity.assemblyplanner.service.api.OrderEventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,7 @@ public class OrderEventController {
             @ApiResponse(responseCode = "404", description = "the requested order or customer was not found")
     })
     @ResponseStatus(HttpStatus.CREATED)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Event createEvent(@PathVariable UUID customerId,
                              @PathVariable UUID orderId,
                              @RequestBody @Valid EventCreateRequest createRequest)
@@ -57,6 +59,7 @@ public class OrderEventController {
             @ApiResponse(responseCode = "404", description = "the requested event, order or customer was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Event patchEvent(@PathVariable UUID customerId,
                             @PathVariable UUID orderId,
                             @PathVariable UUID eventId,
@@ -69,6 +72,7 @@ public class OrderEventController {
             @ApiResponse(responseCode = "404", description = "the requested event, order or customer was not found")
     })
     @ResponseStatus(HttpStatus.OK)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public Event putEvent(@PathVariable UUID customerId,
                             @PathVariable UUID orderId,
                             @PathVariable UUID eventId,
@@ -81,6 +85,7 @@ public class OrderEventController {
             @ApiResponse(responseCode = "404", description = "the requested event, order or customer was not found")
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RolesAllowed({"MANAGER", "ADMINISTRATOR"})
     public void deleteEvent(@PathVariable UUID customerId,
                           @PathVariable UUID orderId,
                           @PathVariable UUID eventId) {
