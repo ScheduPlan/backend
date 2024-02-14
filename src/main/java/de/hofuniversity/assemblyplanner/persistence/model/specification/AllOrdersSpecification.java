@@ -42,6 +42,12 @@ public class AllOrdersSpecification extends RestrictedOrderSpecification {
             );
         }
 
+        if(ordersQuery.orderId() != null) {
+            rootPredicate = criteriaBuilder.and(
+                    rootPredicate, criteriaBuilder.equal(root.get("id"), ordersQuery.orderId())
+            );
+        }
+
         return rootPredicate;
     }
 }

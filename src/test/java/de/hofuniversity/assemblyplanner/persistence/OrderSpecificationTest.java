@@ -107,6 +107,7 @@ public class OrderSpecificationTest {
                         null,
                         null,
                         null,
+                        null,
                         null
                 )
         ), Sort.by("customer_company"));
@@ -118,6 +119,7 @@ public class OrderSpecificationTest {
         List<Order> orders = orderRepository.findAll(new AllOrdersSpecification(
                 new AllOrdersQuery(
                         "A",
+                        null,
                         null,
                         null,
                         null,
@@ -141,6 +143,7 @@ public class OrderSpecificationTest {
                         null,
                         null,
                         null,
+                        null,
                         null
                 )
         ));
@@ -158,9 +161,28 @@ public class OrderSpecificationTest {
                         null,
                         teamRepository.findAll().iterator().next().getId(),
                         null,
+                        null,
                         null
                 )
         ));
         assertThat(orders).size().isEqualTo(2);
+    }
+
+    @Test
+    public void shouldFindByOrderById() {
+        List<Order> orders = orderRepository.findAll(new AllOrdersSpecification(
+                new AllOrdersQuery(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        orderRepository.findAll().iterator().next().getId(),
+                        null,
+                        null
+                )
+        ));
+        assertThat(orders).size().isEqualTo(1);
     }
 }

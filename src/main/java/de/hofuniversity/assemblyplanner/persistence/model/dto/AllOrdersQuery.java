@@ -11,6 +11,7 @@ public record AllOrdersQuery(
         String customerNumber,
         UUID customerId,
         UUID teamId,
+        UUID orderId,
         OrderState[] states,
         String description
 ) { }
