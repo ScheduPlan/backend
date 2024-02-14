@@ -1,92 +1,74 @@
 # assembly-planner-backend
 
+## Beschreibung
 
+Dies ist das Backend für unser Montageplanungs-Tool. Mit diesem können Kunden, Aufträge, Termine, Mitarbeiter und weitere Ressourcen verwaltet werden.
+Als Programmiersprache wurde Java gewählt. Konkret wurde sich für das gängige Framework "Spring Boot" entschieden. Dies begründet sich darin,
+dass diese Programmiersprache oftmals in Firmen am gängigsten ist und somit voraussichtlich am besten unterstützt wird.
+Weiterhin ist die Fachkenntnis der Projektteilnehmer im Bereich Java am höchsten. Dadurch kann die Entwicklungszeit verringert werden.
+Als Alternativen kamen die Nutzung von Spring Boot unter Kotlin, als auch die Entwicklung eines Microservices mittels der Sprache GoLang in Frage.
 
-## Getting started
+Die Verwendung von Kotlin würde einige wesentliche Vorteile mit sich bringen. Grundsätzlich ist nicht ausgeschlossen, dass in der Zukunft einige Teile
+der Applikation mittels Kotlin geschrieben werden. Dies würde langfristig in höherer Entwicklungsgeschwindigkeit und besserer Wartbarkeit resultieren,
+da Kotlin z.B. die Behandlung von null-Werten erheblich vereinfacht. Da Kotlin zu JVM-Bytecode kompiliert wird, ist eine Mischung der Technologien problemlos
+möglich. Allerdings wurde sich für die jetztige Entwicklung gegen die Nutzung von Kotlin entschieden, da sich der Syntax beider Sprachen teilweise erheblich
+unterscheidet und somit ein initial höherer Entwicklungsaufwand zu erwarten war.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Gegen die Nutzung von GoLang wurde sich ebenfalls aufgrund der höheren Entwicklungszeit entschieden. Im Bereich Golang gibt es bisher nur Microservice-Frameworks,
+jedoch keine so allumfassenden Umgebungen wie Spring-Boot. Dies würde ebenfalls in höherem Entwicklungsaufwand und potenziell schlecherer Wartbarkeit münden.
+Da GoLang eine relativ neue Sprache ist kann weiterhin davon ausgegangen werden, dass das Know-How zu dieser Sprache in vielen Firmen noch nicht ausreichend
+ausgeprägt ist, was zu einer langsameren Verbreitung führen könnte.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Running
 
-## Add your files
+Die Software wird zum gegebenen Zeitpunkt nicht als vollständig kompiliertes Projekt ausgeliefert.
+Es gibt mehrere Varianten, wie das System derzeit gestartet werden kann:
+1. Nutzung von IDEs: Die Applikation kann in allen gängigen Java-IDEs mit Maven-Unterstützung gestartet werden. Wir empfehlen die Verwendung von IntelliJ. Hierbei ist es ausreichend, die Main-Methode der Klasse `AssemblyplannerApplication` auszuführen. Im Normalfall sollten IDEs diese automatisch mit den korrekten Parametern starten.
+2. Starten der Software mittels Maven: Das Backend kann mittels Command-Line gestartet werden. Hierzu wird der Befehl `./mvnw spring-boot:run` im Root-Directory des Repositories ausgeführt. Unter Umständen ist es erforderlich, zuvor die Dependencies der Applikation mittels `mvn clean install` zu laden.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Tests
 
+Für verschiedene Szenarien werden Unit-Tests bereitgestellt. Diese dienen dazu, kritische Funktionalitäten des Backends zu validieren und Fehler frühzeitig zu erkennen.
+Wir nutzen Maven Surefire um sicherzustellen, dass der Maven-Kompilierungsvorgang abgebrochen wird, sobald Test-Failures festgestellt werden.
+Unit-Tests können mittels `mvn test` ausgeführt werden.
+
+## Konfiguration
+
+Die Konfiguration wird mittels des Spring-Boot Konfigurationsfile `application.properties` im Ordner `resources` durchgeführt.
+Diese Konfigurationsdatei wurde in der [Spring-Boot Dokumentation](https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html) bereits ausführlich dokumentiert.
+Weitere spezifische Konfigurationen können unter den jeweiligen Modul-Konfigurationen eingesehen werden.
+
+## Datenbank
+
+Die Applikation wird aktuell mit einer In-Memory-Datenbank (H2) ausgeliefert. Diese wird zu jedem Start der Applikation neu erstellt. 
+Mittels der im Abschnitt "Konfiguration" beschriebenen konfigurationsoptionen kann jede beliebige Datenbank angebunden werden.
+Hierzu muss allerdings die entsprechende Klasse bereitgestellt werden. Eine beispielhafte Konfiguration wird in der [Spring Boot Dokumentation](https://spring.io/guides/gs/accessing-data-mysql) beschrieben.
+Zu Testzwecken empfehlen wir die Nutzung der vorkonfigurierten In-Memory database.
+
+## Dokumentation
+
+Die Applikation kommuniziert ausschließlich via REST. Alle REST-Endpunkte können in der von der Applikation selbst bereitgestellten Swagger-Dokumentation eingesehen werden.
+Sobald die Applikation gestartet ist, kann die REST-Dokumentation unter `http://localhost:8080/swagger-ui/index.html` abgerufen werden.
+
+## Login
+
+Die Applikation erstellt beim Start automatisch einen Administrations-Nutzer. Die Login-Daten für diesen Nutzer sind:
+- Passwort: admin
+- Username: admin
+
+Der Login mittels REST erfolgt durch Nutzung des REST-Endpunkts `/auth/login`.
+Der folgende Payload kann zum Einloggen als Administrator genutzt werden:
+```json
+{
+  "username": "admin",
+  "password": "admin"
+}
 ```
-cd existing_repo
-git remote add origin https://gitlab.hof-university.de/aschmidt9/assembly-planner-backend.git
-git branch -M main
-git push -uf origin main
-```
+Die Response enthält sowohl einen Access-Token, als auch einen Refresh-Token. Der Access-Token wird als Authentifizierung genutzt. 
+Er kann kopiert und anschließend als Bearer-Token genutzt werden. Hierzu ist ein Klick auf "Authorize" erforderlich. 
+Nach eintragen des durch `/auth/login` erhaltenen JWT-Tokens kann die API in vollem Umfang genutzt werden.
 
-## Integrate with your tools
+Der Refresh-Token kann genutzt werden, um in einem bestimmten Zeitraum nach dem erstellen des Tokens Logins ohne die Eingabe von Passwörtern durchzuführen.
+Hierzu kann der Endpunkt `/auth/refresh` genutzt werden. Der Refresh-Token wird übermittelt. 
+Als Response erhält der Nutzer die Nutzer-ID, für den der Refresh-Token erstellt wurde, als auch einen neuen Access-Token.
 
-- [ ] [Set up project integrations](https://gitlab.hof-university.de/aschmidt9/assembly-planner-backend/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
