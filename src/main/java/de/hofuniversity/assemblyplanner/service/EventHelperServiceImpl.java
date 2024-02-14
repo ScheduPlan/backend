@@ -4,6 +4,7 @@ import de.hofuniversity.assemblyplanner.exceptions.ResourceNotFoundException;
 import de.hofuniversity.assemblyplanner.persistence.model.Employee;
 import de.hofuniversity.assemblyplanner.persistence.model.Event;
 import de.hofuniversity.assemblyplanner.persistence.model.Order;
+import de.hofuniversity.assemblyplanner.persistence.model.Person;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.Helper;
 import de.hofuniversity.assemblyplanner.persistence.model.dto.ResourceRequest;
 import de.hofuniversity.assemblyplanner.persistence.repository.EventRepository;
@@ -104,14 +105,15 @@ public class EventHelperServiceImpl implements de.hofuniversity.assemblyplanner.
         List<Event> overlaps = eventRepository.findAllOverlappingEvents(event);
         overlaps = overlaps.stream()
                 .filter(e -> {
-                    boolean isHelper = e.getHelpers().contains(helper);
+                    boolean isHelper = e.getHelpers().stream().map(Person::getId).toList().contains(helper.getId());
                     Order o = e.getOrder();
-
+                    System.out.println(e.getHelpers());
+                    System.out.println(isHelper);
                     if(o.getTeam() == null)
                         return isHelper;
 
                     boolean isTeamMember = o.getTeam().getEmployees().stream().anyMatch(member -> member.equals(helper));
-                    return !(isHelper || isTeamMember);
+                    return isHelper || isTeamMember;
                 }).toList();
 
         if(!overlaps.isEmpty())
